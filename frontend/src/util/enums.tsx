@@ -1,0 +1,6 @@
+
+export enum MessageType {
+    USER_LIST = "USER_LIST",
+    AUTHENTICATE = "AUTHENTICATE",
+    CHAT_MESSAGE = "CHAT_MESSAGE"
+}

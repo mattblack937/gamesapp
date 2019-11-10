@@ -1,0 +1,88 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #09d3ac;
+}
+
+.user-list{
+  background: red;
+  width: 500px;
+  margin: 20px;
+}
+
+.user{
+  margin: 2px;
+  background: black;
+}
+
+.user:hover{
+  cursor: pointer;
+  background: lightpink;
+}
+
+.user-list div:first-child{
+  font-weight: bold;
+  color: white;
+  background: red;
+}
+
+/*LOGIN*/
+.login{
+  background: blue;
+  width: 480px;
+  padding: 10px;
+  display: grid;
+}
+
+.login input{
+  width: 300px;
+  margin: 5px auto;
+  font-size: 30px;
+}
+
+.login button{
+  margin: auto;
+  width: 150px;
+  height: 30px;
+  font-size: 20px;
+}
+
+/*LOGOUT*/
+.logout input{
+  width: 150px;
+  height: 40px;
+  font-size: 20px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/*CHAT*/
+.chat{
+  background: gray;
+  width: 500px;
+  margin: 20px;
+}
+
+.chat input{
+  width: 300px;
+  font-size: 30px;
+}
+
