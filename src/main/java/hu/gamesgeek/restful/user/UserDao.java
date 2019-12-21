@@ -62,4 +62,32 @@ public class UserDao {
         em.close();
     }
 
+    public User findUserById(String userId) {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        User user = em.createQuery("SELECT user from " + User.class.getSimpleName() + " user" +
+                        " WHERE user.id = :userId",
+                User.class).setParameter("userId", Long.valueOf(userId)).getSingleResult();
+        em.close();
+        return user;
+    }
+
+    public User checkUserLogin(String userName, String password) {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        try {
+            User user = em.createQuery("SELECT user from " + User.class.getSimpleName() + " user" +
+                            " WHERE user.userName = :userName AND user.password = :password ",
+                    User.class).setParameter("userName", userName).setParameter("password", password).getSingleResult();
+            em.close();
+            return user;
+        } catch (Exception e){
+            return null;
+        } finally {
+            em.close();
+        }
+//        User user = em.createQuery("SELECT user from " + User.class.getSimpleName() + " user" +
+//                        " WHERE user.userName = :userName AND user.password = :password ",
+//                User.class).setParameter("userName", userName).setParameter("password", password).getSingleResult();
+//        em.close();
+//        return user;
+    }
 }

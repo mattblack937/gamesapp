@@ -1,5 +1,7 @@
 package hu.gamesgeek.restful.user;
 
+import hu.gamesgeek.restful.user.User;
+import hu.gamesgeek.websocket.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,4 +15,16 @@ public class UserService {
         return userDao.findUserByUserName(userName);
     }
 
+    public UserDTO findUserDTOByUserId(String userId) {
+        User user = userDao.findUserById(userId);
+        UserDTO result = new UserDTO();
+        result.setId(userId);
+        result.setName(user.getUserName());
+        return result;
+    }
+
+    public UserDTO checkUserLogin(String userName, String password) {
+        User user = userDao.checkUserLogin(userName, password);
+        return user==null ? null : new UserDTO(user);
+    }
 }

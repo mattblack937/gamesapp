@@ -1,4 +1,4 @@
-package hu.gamesgeek.restful;
+package hu.gamesgeek.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

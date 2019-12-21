@@ -1,11 +1,10 @@
 import React from 'react';
+import {api} from "../util/API";
 
 export function Logout () {
 
     return (
-        <form className={"logout"} action={"http://localhost:8080/logout"}>
-            <input value={"KILÉPÉS"} type={"submit"}/>
-        </form>
+        <input value={"KILÉPÉS"} onClick={() => api.logout()}/>
     );
 }
 

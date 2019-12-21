@@ -12,11 +12,19 @@ import {Logout} from "./components/Logout";
 
 type AppState = {
     user?: User,
-    webSocket?: WebSocketEntity,
+    webSocketEntity?: WebSocketEntity,
     users: User[],
     chatMessages: ChatMessage[],
     componentDidMount: boolean
 }
+
+const initialState = {
+    user: undefined,
+    webSocketEntity: undefined,
+    users: [],
+    chatMessages: [],
+    componentDidMount: false
+} as AppState;
 
 export class App extends Component<{}, AppState> {
     constructor(props: any){
@@ -27,11 +35,7 @@ export class App extends Component<{}, AppState> {
 
         this.sendChatMessage = this.sendChatMessage.bind(this);
 
-        this.state = {
-            chatMessages: [],
-            users: [],
-            componentDidMount: false
-        };
+        this.state = initialState;
     }
 
     async componentDidMount() {
@@ -41,8 +45,9 @@ export class App extends Component<{}, AppState> {
             componentDidMount: true
         });
 
-        user && !this.state.webSocket &&
+        user && !this.state.webSocketEntity &&
         this.registerSocket();
+
     }
 
     render(){
@@ -54,7 +59,9 @@ export class App extends Component<{}, AppState> {
             <div className="App">
                 <header className="App-header">
 
-                    <Logout/>
+                    {this.state.user &&
+                        <Logout/>
+                    }
 
                     <Switch>
                         {!this.state.user &&
@@ -80,9 +87,9 @@ export class App extends Component<{}, AppState> {
 
     async registerSocket(){
         let token = await api.getUserToken();
-        const webSocket = new WebSocketEntity(this, token);
+        const webSocketEntity = new WebSocketEntity(this, token);
         this.setState({
-            webSocket: webSocket
+            webSocketEntity: webSocketEntity
         });
     }
 
@@ -93,8 +100,7 @@ export class App extends Component<{}, AppState> {
     }
 
     sendMessage(data: any, messageType: MessageType){
-        this.state.user &&
-        this.state.webSocket && this.state.webSocket.sendMessage(this.state.user, data, messageType);
+        this.state.webSocketEntity!.sendMessage(data, messageType);
     }
 
     setUsers(users: User[]) {
@@ -111,6 +117,15 @@ export class App extends Component<{}, AppState> {
 
     sendChatMessage(text: string) {
         this.sendMessage({message: text} as ChatMessage, MessageType.CHAT_MESSAGE);
+    }
+
+    updateState(appState: AppState) {
+        this.setState(appState);
+    }
+
+    onLogout() {
+        this.setState(initialState);
+        this.componentDidMount();
     }
 }
 

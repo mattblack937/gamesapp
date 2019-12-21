@@ -1,11 +1,22 @@
-package hu.gamesgeek.dto;
+package hu.gamesgeek.websocket.dto;
+
+import hu.gamesgeek.restful.user.User;
 
 import java.util.Objects;
 import java.util.UUID;
 
 public class UserDTO {
-    String id = UUID.randomUUID().toString();
+    String id;
     String name;
+
+    public UserDTO() {
+
+    }
+
+    public UserDTO(User user) {
+        this.id = String.valueOf(user.getId());
+        this.name = user.getUserName();
+    }
 
     public String getId() {
         return id;

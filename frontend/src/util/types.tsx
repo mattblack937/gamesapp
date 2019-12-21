@@ -5,14 +5,17 @@ export type User = {
     name: string
 }
 
-export type Message = {
-    user: User,
-    type: MessageType,
-    data: any
+export type WSMessage = {
+    data: any,
+    messageType: MessageType
 }
 
 export type ChatMessage = {
     message: string,
-    user: User,
-    date?: Date
+    user: User
+}
+
+export type UserToken = {
+    userId: string,
+    token: string
 }
