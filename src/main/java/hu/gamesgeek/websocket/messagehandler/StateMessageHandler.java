@@ -25,6 +25,16 @@ public class StateMessageHandler extends AbstractMessageHandler<StateDTO> {
 
     }
 
+    @Override
+    public MessageType getMessageType() {
+        return MessageType.STATE;
+    }
+
+    @Override
+    public Class getDtoClass() {
+        return StateDTO.class;
+    }
+
     public static void updateUserList(){
         UserService userService = ServiceHelper.getService(UserService.class);
         Set<String> userIds = ConnectionHandler.getAllUserIds();

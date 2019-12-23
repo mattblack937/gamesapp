@@ -6,6 +6,8 @@ let webSocket = null as WebSocket | null;
 
 export class WebSocketEntity {
     constructor(app: App, token: string){
+        webSocket && webSocket.close();
+
         webSocket = new WebSocket("ws://localhost:9000") as WebSocket;
 
         webSocket.onmessage = (json) => {

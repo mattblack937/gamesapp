@@ -63,16 +63,19 @@
   height: 30px;
   font-size: 20px;
 }
+/*LOGIN*/
 
 /*LOGOUT*/
-.logout input{
-  width: 150px;
-  height: 40px;
-  font-size: 20px;
+.logout{
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 0px;
+  right: 0px;
+  padding: 10px;
+  margin: 10px;
+  background :lightgray;
+  color: black;
 }
+/*LOGOUT*/
 
 /*CHAT*/
 .chat{
@@ -85,4 +88,21 @@
   width: 300px;
   font-size: 30px;
 }
+/*CHAT*/
 
+/*MENU*/
+  .menu-container{
+    display: flex
+  }
+
+.menu-element{
+  margin: 10px;
+  padding: 10px;
+  background: gray;
+  color: black;
+}
+
+.menu-element.active{
+  background: white;
+}
+/*MENU*/

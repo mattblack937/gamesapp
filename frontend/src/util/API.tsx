@@ -1,8 +1,16 @@
 import { User } from "./types";
+import {GameType} from "./enums";
 
 const URL = "http://localhost:8080";
 
 class API{
+
+    public async createLobby(gameType: GameType) {
+        let message = await fetch(URL + "/create-lobby/"+gameType, {
+            method: 'GET',
+            credentials: 'include'
+        });
+    }
 
     public async getUserToken(): Promise<string>{
         let message = await fetch(URL + "/userToken", {

@@ -10,4 +10,14 @@ public class ChatMessageHandler extends AbstractMessageHandler<ChatMessageDTO> {
     public void handleMessage(String userId, ChatMessageDTO wsMessage) {
         String a = "a";
     }
+
+    @Override
+    public MessageType getMessageType() {
+        return MessageType.CHAT_MESSAGE;
+    }
+
+    @Override
+    public Class getDtoClass() {
+        return ChatMessageDTO.class;
+    }
 }

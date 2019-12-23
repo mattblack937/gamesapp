@@ -1,4 +1,4 @@
-package hu.gamesgeek.websocket.messagehandler;
+package hu.gamesgeek.game;
 
 import hu.gamesgeek.websocket.MessageType;
 
@@ -9,8 +9,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface MessageHandler {
-    MessageType messageType();
-
-    Class dtoClass();
+public @interface GameLobby {
+    GameType gameType();
 }

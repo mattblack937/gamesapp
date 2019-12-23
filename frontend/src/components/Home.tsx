@@ -13,8 +13,8 @@ export function Home (props: HomeType) {
 
     return (
         <div >
-            <UserList users={props.users}/>
-            <Chat chatMessages={props.chatMessages} sendChatMessage={props.sendChatMessage}/>
+            {/*<UserList users={props.users}/>*/}
+            {/*<Chat chatMessages={props.chatMessages} sendChatMessage={props.sendChatMessage}/>*/}
         </div>
     );
 }

@@ -4,7 +4,9 @@ import {api} from "../util/API";
 export function Logout () {
 
     return (
-        <input value={"KILÉPÉS"} onClick={() => api.logout()}/>
+        <div className={"logout"} onClick={() => api.logout()}>
+            LOGOUT
+        </div>
     );
 }
 

@@ -2,8 +2,11 @@ package hu.gamesgeek;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hu.gamesgeek.game.GameType;
+import hu.gamesgeek.game.Lobby;
 import hu.gamesgeek.restful.user.UserService;
 import hu.gamesgeek.util.ConnectionHandler;
+import hu.gamesgeek.util.LobbyHandler;
 import hu.gamesgeek.websocket.MessageType;
 import hu.gamesgeek.websocket.WSMessage;
 import hu.gamesgeek.websocket.dto.UserDTO;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.websocket.server.PathParam;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -26,8 +30,6 @@ public class GameApi {
 
     ObjectMapper mapper = new ObjectMapper();
 
-//            new ObjectMapper().readValue("{\"username\":\"pista\"}", GameApi.UserNameAndPassword.class)
-//req.getReader().lines().collect(Collectors.joining(System.lineSeparator()))
     @GetMapping("/userToken")
     public String getUserToken(HttpServletRequest request) {
         UserDTO user = getUserDTOFromRequest(request);
@@ -53,12 +55,12 @@ public class GameApi {
     public void login( @RequestBody UserNameAndPassword userNameAndPassword, HttpServletRequest request) {
         UserDTO user = getUserDTOFromRequest(request);
 
+        request.getSession().invalidate();
+        HttpSession session = request.getSession(true);
+
         if (user != null){
             ConnectionHandler.getWebSocketsByUserId(user.getId()).forEach(webSocket -> ConnectionHandler.removeWebSocket(webSocket));
         }
-
-        request.getSession().invalidate();
-        HttpSession session = request.getSession(true);
 
         if (userNameAndPassword.getUserName()==null || userNameAndPassword.getPassword()==null){
             //FIXME ERROR HANDLING
@@ -72,20 +74,26 @@ public class GameApi {
     public void logout( HttpServletRequest request) {
         UserDTO user = getUserDTOFromRequest(request);
 
+        request.getSession().invalidate();
+        request.getSession(true);
+
         if (user != null){
             ConnectionHandler.getWebSocketsByUserId(user.getId()).forEach(webSocket -> ConnectionHandler.removeWebSocket(webSocket));
         }
-
-        request.getSession().invalidate();
-        request.getSession(true);
     }
 
     private UserDTO getUserDTOFromRequest(HttpServletRequest request) {
         return (UserDTO) request.getSession().getAttribute("user");
     }
 
+    @GetMapping("/create-lobby/{gameType}")
+    public void createLobby(@PathVariable("gameType") String gameType, HttpServletRequest request) {
+        Lobby lobby = LobbyHandler.createLobby(GameType.valueOf(gameType));
+    }
+
     @GetMapping("/user")
     public String getUser(HttpServletRequest request) {
+
         UserDTO user = getUserDTOFromRequest(request);
 
         if (user == null){
