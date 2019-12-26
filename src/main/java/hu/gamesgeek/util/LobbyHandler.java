@@ -6,6 +6,7 @@ import hu.gamesgeek.game.GameType;
 import hu.gamesgeek.websocket.MessageType;
 import hu.gamesgeek.websocket.messagehandler.AbstractMessageHandler;
 import hu.gamesgeek.websocket.messagehandler.MessageHandler;
+import org.java_websocket.WebSocket;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
@@ -36,5 +37,6 @@ public class LobbyHandler {
     public static void onStartGame(Lobby gameLobby) {
         lobbyList.remove(gameLobby);
     }
+
 
 }

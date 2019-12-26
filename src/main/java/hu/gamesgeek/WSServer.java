@@ -20,7 +20,7 @@ import java.net.InetSocketAddress;
 
 public class WSServer extends WebSocketServer {
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private static ObjectMapper mapper = new ObjectMapper();
 
     public WSServer(int port) {
         super(new InetSocketAddress(port));
@@ -98,7 +98,7 @@ public class WSServer extends WebSocketServer {
         }
     }
 
-    public void sendMessage(WebSocket webSocket, WSMessage message) {
+    public static void sendMessage(WebSocket webSocket, WSMessage message) {
         try {
             String messageJson = mapper.writeValueAsString(message);
             webSocket.send(messageJson);

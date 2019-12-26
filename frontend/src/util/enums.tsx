@@ -9,3 +9,9 @@ export enum GameType {
     AMOBA = "AMOBA"
 }
 
+
+export enum GameState {
+    BROWSING,
+    IN_LOBBY,
+    IN_GAME,
+}

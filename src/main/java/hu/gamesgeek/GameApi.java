@@ -88,7 +88,11 @@ public class GameApi {
 
     @GetMapping("/create-lobby/{gameType}")
     public void createLobby(@PathVariable("gameType") String gameType, HttpServletRequest request) {
+        UserDTO user = getUserDTOFromRequest(request);
+
         Lobby lobby = LobbyHandler.createLobby(GameType.valueOf(gameType));
+        lobby.join(user.getId());
+        lobby.updateUsers();
     }
 
     @GetMapping("/user")

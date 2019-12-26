@@ -1,15 +1,15 @@
 import React, {Component} from 'react';
-import { RouteComponentProps,MemoryRouter, Redirect, Route, Switch} from "react-router-dom";
+import {Link, Redirect, Route, RouteComponentProps, Switch} from "react-router-dom";
 import './css/App.css';
 import {ChatMessage, User} from "./util/types";
 import {Login} from "./components/Login";
-import {GameType, MessageType} from "./util/enums";
+import {GameState, GameType, MessageType} from "./util/enums";
 import {Home} from "./components/Home";
 import {api} from "./util/API";
 import {WebSocketEntity} from "./util/WebSocketEntity";
-import {Game} from "./components/Game";
+import {Game} from "./components/game/Game";
 import {Logout} from "./components/Logout";
-import { useHistory } from 'react-router-dom'
+import {Lobby} from "./components/game/Lobby";
 
 type AppState = {
     user?: User,
@@ -17,7 +17,8 @@ type AppState = {
     users: User[],
     chatMessages: ChatMessage[],
     componentDidMount: boolean,
-    activeMenu: MenuEnum
+    gameState: GameState,
+    gameType?: GameType
 }
 
 enum MenuEnum {
@@ -30,7 +31,9 @@ const initialState = {
     users: [],
     chatMessages: [],
     componentDidMount: false,
-    activeMenu: MenuEnum.HOME
+    activeMenu: MenuEnum.HOME,
+    gameState: GameState.BROWSING,
+    gameType: undefined
 } as AppState;
 
 export class App extends Component<RouteComponentProps<{}>, AppState> {
@@ -39,7 +42,6 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
 
         this.registerSocket = this.registerSocket.bind(this);
         this.setUser = this.setUser.bind(this);
-        this.setActiveMenu = this.setActiveMenu.bind(this);
         this.sendChatMessage = this.sendChatMessage.bind(this);
 
         this.state = initialState;
@@ -71,9 +73,7 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
 
                 <header className="App-header">
 
-                    <Menu activeMenu={this.state.activeMenu} user={this.state.user} setActiveMenu={this.setActiveMenu} />
-
-                    {/*<button onClick={() => api.createLobby(GameType.AMOBA)}/>*/}
+                    <Menu user={this.state.user} />
 
                     <Switch>
                         {!this.state.user &&
@@ -88,6 +88,10 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
 
                         <Route path={"/game"}>
                             <Game/>
+                        </Route>
+
+                        <Route path={"/lobby"}>
+                            <Lobby gameState={this.state.gameState} gameType={this.state.gameType}/>
                         </Route>
 
                         <Redirect to="/home" />
@@ -111,18 +115,6 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
         });
     }
 
-    setActiveMenu(activeMenu: MenuEnum) {
-        if (this.state.activeMenu === activeMenu){
-            return;
-        }
-
-        this.setState({
-                activeMenu: activeMenu
-            }, () => {
-                this.props.history.push("/" + activeMenu.valueOf());
-        });
-    }
-
     sendMessage(data: any, messageType: MessageType){
         this.state.webSocketEntity!.sendMessage(data, messageType);
     }
@@ -136,7 +128,7 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
     addChatMessage(chatMessage: ChatMessage) {
         this.setState({
             chatMessages: this.state.chatMessages.concat(chatMessage)
-        })
+        });
     }
 
     sendChatMessage(text: string) {
@@ -155,12 +147,10 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
 }
 
 type MenuProps = {
-    user?: User,
-    activeMenu: MenuEnum,
-    setActiveMenu: (menuEnum: MenuEnum) => void
+    user?: User
 }
 
-function Menu({user, activeMenu, setActiveMenu}: MenuProps){
+function Menu({ user }: MenuProps){
 
     if (!user){
         return (null);
@@ -168,20 +158,18 @@ function Menu({user, activeMenu, setActiveMenu}: MenuProps){
 
     return (
         <div className={"menu-container"}>
-            <div className={"menu-element" + (activeMenu===MenuEnum.HOME ? " active" : "")} onClick={()=> setActiveMenu(MenuEnum.HOME)}>
-                HOME
+            <div className={"menu-element"}>
+                <Link to={"/home"}>
+                    HOME
+                </Link>
             </div>
-            <div className={"menu-element" + (activeMenu===MenuEnum.GAME ? " active" : "")} onClick={()=> setActiveMenu(MenuEnum.GAME)}>
-                GAME
-            </div>
-            <div className={"menu-element" + (activeMenu===MenuEnum.LOBBY ? " active" : "")} onClick={()=> setActiveMenu(MenuEnum.LOBBY)}>
-                LOBBY
-            </div>
-            <div className={"menu-element" + (activeMenu===MenuEnum.PEOPLE ? " active" : "")} onClick={()=> setActiveMenu(MenuEnum.PEOPLE)}>
-                PEOPLE
+            <div className={"menu-element"}>
+                <Link to={"/lobby"}>
+                    LOBBY
+                </Link>
             </div>
         </div>
-    )
+    );
 }
 
 export default App;
