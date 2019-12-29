@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link, Redirect, Route, RouteComponentProps, Switch} from "react-router-dom";
 import './css/App.css';
-import {ChatMessage, User} from "./util/types";
+import {ChatMessage, LobbyType, User} from "./util/types";
 import {Login} from "./components/Login";
 import {GameState, GameType, MessageType} from "./util/enums";
 import {Home} from "./components/Home";
@@ -11,14 +11,13 @@ import {Game} from "./components/game/Game";
 import {Logout} from "./components/Logout";
 import {Lobby} from "./components/game/Lobby";
 
-type AppState = {
+export type AppState = {
     user?: User,
     webSocketEntity?: WebSocketEntity,
     users: User[],
     chatMessages: ChatMessage[],
     componentDidMount: boolean,
-    gameState: GameState,
-    gameType?: GameType
+    lobby?: LobbyType
 }
 
 enum MenuEnum {
@@ -32,8 +31,7 @@ const initialState = {
     chatMessages: [],
     componentDidMount: false,
     activeMenu: MenuEnum.HOME,
-    gameState: GameState.BROWSING,
-    gameType: undefined
+    lobby: undefined
 } as AppState;
 
 export class App extends Component<RouteComponentProps<{}>, AppState> {
@@ -43,6 +41,7 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
         this.registerSocket = this.registerSocket.bind(this);
         this.setUser = this.setUser.bind(this);
         this.sendChatMessage = this.sendChatMessage.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this);
 
         this.state = initialState;
     }
@@ -67,18 +66,41 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
         return (
             <div className="App">
 
+
+
+
                 {this.state.user &&
                     <Logout/>
                 }
 
                 <header className="App-header">
+                    <div>
+                        <div onClick={ ()=> api.post1()}>
+                            POST1
+                        </div>
+
+                        <div onClick={ ()=> api.post2()}>
+                            POST2
+                        </div>
+
+                        <div onClick={ ()=> api.get1()}>
+                            GET1
+                        </div>
+
+                        <div onClick={ ()=> api.get2()}>
+                            Get2
+                        </div>
+
+                    </div>
+
+
 
                     <Menu user={this.state.user} />
 
                     <Switch>
                         {!this.state.user &&
                             <Route>
-                                <Login setUser={this.setUser} registerSocket={this.registerSocket}/>
+                                <Login refresh={this.componentDidMount}/>
                             </Route>
                         }
 
@@ -91,7 +113,7 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
                         </Route>
 
                         <Route path={"/lobby"}>
-                            <Lobby gameState={this.state.gameState} gameType={this.state.gameType}/>
+                            <Lobby lobby={this.state.lobby} users={this.state.users}/>
                         </Route>
 
                         <Redirect to="/home" />
@@ -103,10 +125,12 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
 
     async registerSocket(){
         let token = await api.getUserToken();
-        const webSocketEntity = new WebSocketEntity(this, token);
-        this.setState({
-            webSocketEntity: webSocketEntity
-        });
+        if (token){
+            let webSocketEntity = new WebSocketEntity(this, token);
+            this.setState({
+                webSocketEntity: webSocketEntity
+            });
+        }
     }
 
     setUser(user: User) {
@@ -136,7 +160,7 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
     }
 
     updateState(appState: AppState) {
-        this.setState(appState);
+        this.setState({...appState});
     }
 
     async onLogout() {

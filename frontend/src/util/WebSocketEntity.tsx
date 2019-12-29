@@ -1,6 +1,6 @@
-import { UserToken, WSMessage} from "./types";
+import {ChatMessage, UserToken, WSMessage} from "./types";
 import {MessageType} from "./enums";
-import App from "../App";
+import App, {AppState} from "../App";
 
 let webSocket = null as WebSocket | null;
 
@@ -13,12 +13,13 @@ export class WebSocketEntity {
         webSocket.onmessage = (json) => {
             console.log(json);
             let message = JSON.parse(json.data) as WSMessage;
+            console.log(message);
             switch (message.messageType) {
                 case MessageType.STATE.valueOf():
-                    app.updateState(JSON.parse(message.data));
+                    app.updateState(JSON.parse(message.data) as AppState);
                     break;
                 case MessageType.CHAT_MESSAGE.valueOf():
-                    app.addChatMessage(JSON.parse(message.data));
+                    app.addChatMessage(JSON.parse(message.data) as ChatMessage);
                     break;
             }
         };

@@ -2,19 +2,19 @@ package hu.gamesgeek;
 
 import hu.gamesgeek.util.ConnectionHandler;
 import hu.gamesgeek.websocket.dto.UserTokenDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootApplication
 @Configuration
-public class GameSpringApplication {
-
-    @Autowired
-    private GameFilter gameFilter;
+public class GameSpringApplication extends WebSecurityConfigurerAdapter {
 
 	private static WSServer wsServer;
 
@@ -25,12 +25,10 @@ public class GameSpringApplication {
         new UserTokenRemover().run();
     }
 
-
-	public static WSServer getWsServer() {
-		return wsServer;
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and().logout().disable();
 	}
-
-
 
 	private static class UserTokenRemover extends Thread {
 

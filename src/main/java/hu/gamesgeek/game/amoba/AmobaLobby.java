@@ -10,6 +10,8 @@ import hu.gamesgeek.util.ConnectionHandler;
 import hu.gamesgeek.util.ServiceHelper;
 import hu.gamesgeek.websocket.MessageType;
 import hu.gamesgeek.websocket.WSMessage;
+import hu.gamesgeek.websocket.dto.LobbyDTO;
+import hu.gamesgeek.websocket.dto.StateDTO;
 import hu.gamesgeek.websocket.dto.UserDTO;
 import org.java_websocket.WebSocket;
 
@@ -21,12 +23,6 @@ import java.util.stream.Collectors;
 public class AmobaLobby extends Lobby {
 
     public AmobaLobby(){
-        String a = "a";
-    }
-
-    @Override
-    public int getNumberOfPlayers() {
-        return 2;
     }
 
     @Override
@@ -34,31 +30,11 @@ public class AmobaLobby extends Lobby {
         return GameType.AMOBA;
     }
 
+
     @Override
-    public WSMessage toWsMessage() {
-        WSMessage message = new WSMessage();
-        message.setMessageType(MessageType.LOBBY);
-        AmobaLobbyDTO amobaLobbyDTO = new AmobaLobbyDTO();
-        amobaLobbyDTO.setUsers(usersIds.stream().map(usersId-> ServiceHelper.getService(UserService.class).findUserDTOByUserId(usersId)).collect(Collectors.toList()));
-        try {
-            message.setData(objectMapper.writeValueAsString(message));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+    public LobbyDTO toLobbyDTO() {
+        LobbyDTO lobbyDTO = super.toLobbyDTO();
 
-        return message;
+        return lobbyDTO;
     }
-
-    private static class AmobaLobbyDTO implements Serializable {
-        private List<UserDTO> users;
-
-        public List<UserDTO> getUsers() {
-            return users;
-        }
-
-        public void setUsers(List<UserDTO> users) {
-            this.users = users;
-        }
-    }
-
 }

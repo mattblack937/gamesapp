@@ -33,8 +33,11 @@ public class WSServer extends WebSocketServer {
             String userId = ConnectionHandler.getUserIdByWebSocket(webSocket);
             if (userId == null){
                 if (wsMessage.getMessageType() == MessageType.USER_TOKEN){
-                    authenticate(mapper.readValue(wsMessage.getData(), UserTokenDTO.class), webSocket);
-                    StateMessageHandler.updateUserList();
+                    boolean success = authenticate(mapper.readValue(wsMessage.getData(), UserTokenDTO.class), webSocket);
+                    if (success){
+                        StateMessageHandler.initializeAppState(webSocket);
+                        StateMessageHandler.updateUserLists();
+                    }
                 }
             } else {
                 AbstractMessageHandler messageHandler = getMessageHandler(wsMessage.getMessageType());
@@ -62,12 +65,14 @@ public class WSServer extends WebSocketServer {
     }
 
 
-    private void authenticate(UserTokenDTO userTokenDTO, WebSocket webSocket) {
+    private boolean authenticate(UserTokenDTO userTokenDTO, WebSocket webSocket) {
         UserTokenDTO found = ConnectionHandler.getUserTokens().stream().filter(ut -> ut.equals(userTokenDTO)).findFirst().orElse(null);
         if (found != null){
             ConnectionHandler.removeUserToken(found);
             ConnectionHandler.addWebSocket(found.getUserId(), webSocket);
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -78,16 +83,16 @@ public class WSServer extends WebSocketServer {
     @Override
     public void onClose(WebSocket webSocket, int code, String reason, boolean remote) {
         ConnectionHandler.removeWebSocket(webSocket);
-        StateMessageHandler.updateUserList();
+        StateMessageHandler.updateUserLists();
     }
 
     @Override
     public void onError(WebSocket webSocket, Exception ex) {
         ConnectionHandler.removeWebSocket(webSocket);
-        StateMessageHandler.updateUserList();
+        StateMessageHandler.updateUserLists();
     }
 
-    public void broadcastMessage(WSMessage message){
+    public static void broadcastMessage(WSMessage message){
         try {
             String messageJson = mapper.writeValueAsString(message);
             for (WebSocket webSocket: ConnectionHandler.getWebSockets()) {
@@ -107,7 +112,7 @@ public class WSServer extends WebSocketServer {
         }
     }
 
-    public void sendMessage(String userId, WSMessage message) {
+    public static void sendMessage(String userId, WSMessage message) {
         try {
             String messageJson = mapper.writeValueAsString(message);
             for(WebSocket webSocket: ConnectionHandler.getWebSocketsByUserId(userId)){

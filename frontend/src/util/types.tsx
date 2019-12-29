@@ -1,4 +1,5 @@
-import {MessageType} from "./enums";
+import {GameType, MessageType} from "./enums";
+import {Lobby} from "../components/game/Lobby";
 
 export type User = {
     id: string,
@@ -18,4 +19,10 @@ export type ChatMessage = {
 export type UserToken = {
     userId: string,
     token: string
+}
+
+export type LobbyType = {
+    gameType: GameType,
+    players: User[],
+    id: string
 }

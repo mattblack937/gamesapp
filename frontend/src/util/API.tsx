@@ -64,6 +64,87 @@ class API{
         return res;
     }
 
+    public async inviteUser(userId: string) : Promise<boolean> {
+        const res = await fetch(URL + '/invite', {
+            mode: 'cors',
+            credentials: 'include',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                    userName: "sda",
+                    password: "s"
+                }
+            )
+        }).then( res =>{return res.ok });
+
+        return res;
+    }
+
+
+
+    public async get1() {
+        let res = await fetch(URL + '/get1', {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then( res => res.json())
+            .then( res =>{return res})
+            .catch((error=>{return null}));
+    }
+
+    public async get2() {
+        let res = await fetch(URL + '/get2', {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then( res => res.json())
+            .then( res =>{return res})
+            .catch((error=>{return null}));
+    }
+
+    public async post1() {
+        console.log("post1");
+
+        const res = await fetch(URL + '/post1', {
+            mode: 'cors',
+            credentials: 'include',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                    userName: "sda",
+                    password: "s"
+                }
+            )
+        }).then( res =>{return res.ok });
+
+        return res;
+    }
+
+    public async post2() {
+        const res = await fetch(URL + '/post2', {
+            mode: 'cors',
+            credentials: 'include',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                    userName: "sda",
+                    password: "s"
+                }
+            )
+        }).then( res =>{return res.ok });
+
+        return res;
+    }
+
 }
 
 export const api = new API();

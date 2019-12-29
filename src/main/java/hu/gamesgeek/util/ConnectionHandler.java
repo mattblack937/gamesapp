@@ -91,6 +91,6 @@ public abstract class ConnectionHandler {
             }
         }
         userConnections.remove(userId);
-        StateMessageHandler.updateUserList();
+        StateMessageHandler.updateUserLists();
     }
 }
