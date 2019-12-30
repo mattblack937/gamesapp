@@ -1,6 +1,6 @@
 package hu.gamesgeek.game;
 
-import hu.gamesgeek.websocket.MessageType;
+import hu.gamesgeek.types.GameType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,6 +9,11 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface GameLobby {
+public @interface GameAnnotation {
+
     GameType gameType();
+
+    Class dtoClass();
+
+    Class settingsClass() default void.class;
 }

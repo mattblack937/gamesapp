@@ -1,4 +1,4 @@
-import {ChatMessage, UserToken, WSMessage} from "./types";
+import {ChatMessage, User, UserToken, WSMessage} from "./types";
 import {MessageType} from "./enums";
 import App, {AppState} from "../App";
 
@@ -20,6 +20,9 @@ export class WebSocketEntity {
                     break;
                 case MessageType.CHAT_MESSAGE.valueOf():
                     app.addChatMessage(JSON.parse(message.data) as ChatMessage);
+                    break;
+                case MessageType.INVITE.valueOf():
+                    app.addInvite(JSON.parse(message.data) as User);
                     break;
             }
         };

@@ -1,4 +1,4 @@
-package hu.gamesgeek.restful.user;
+package hu.gamesgeek.model.user;
 
 public enum UserRole {
 

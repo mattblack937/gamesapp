@@ -27,6 +27,10 @@
   margin: 20px;
 }
 
+.user-list{
+  padding-bottom: 0.5px;
+}
+
 .user{
   margin: 2px;
   background: black;
@@ -106,3 +110,40 @@
   background: white;
 }
 /*MENU*/
+
+/*GROUP*/
+.group{
+  border: 2px solid yellow;
+}
+/*GROUP*/
+
+.users{
+  border: 2px solid green;
+}
+
+.invites{
+  border: 2px solid white;
+}
+
+.game-component{
+  border: 2px solid coral;
+}
+
+.amoba {
+  border: 2px solid cyan;
+}
+
+.amoba div{
+  display: flex;
+}
+
+.amoba div div{
+  border: 1px solid cyan;
+  height: 40px;
+  width: 40px;
+}
+
+.game-settings{
+    border: 2px solid red;
+}
+

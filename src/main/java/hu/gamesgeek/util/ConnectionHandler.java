@@ -1,6 +1,6 @@
 package hu.gamesgeek.util;
 
-import hu.gamesgeek.websocket.dto.UserTokenDTO;
+import hu.gamesgeek.types.dto.UserTokenDTO;
 import hu.gamesgeek.websocket.messagehandler.StateMessageHandler;
 import org.java_websocket.WebSocket;
 
@@ -72,7 +72,7 @@ public abstract class ConnectionHandler {
     }
 
     public static List<WebSocket> getWebSocketsByUserId(String userId) {
-        return userConnections.get(userId);
+        return userConnections.containsKey(userId) ? userConnections.get(userId) : new ArrayList<>();
     }
 
     public static Set<String> getAllUserIds() {

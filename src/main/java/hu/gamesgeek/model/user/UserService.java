@@ -1,7 +1,6 @@
-package hu.gamesgeek.restful.user;
+package hu.gamesgeek.model.user;
 
-import hu.gamesgeek.restful.user.User;
-import hu.gamesgeek.websocket.dto.UserDTO;
+import hu.gamesgeek.types.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

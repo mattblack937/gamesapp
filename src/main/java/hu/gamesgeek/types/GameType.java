@@ -1,4 +1,4 @@
-package hu.gamesgeek.game;
+package hu.gamesgeek.types;
 
 public enum GameType {
     AMOBA

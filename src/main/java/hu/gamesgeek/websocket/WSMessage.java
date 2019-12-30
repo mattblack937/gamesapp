@@ -1,6 +1,7 @@
 package hu.gamesgeek.websocket;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import hu.gamesgeek.types.MessageType;
 
 import java.io.Serializable;
 

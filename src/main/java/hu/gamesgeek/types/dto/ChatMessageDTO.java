@@ -1,4 +1,4 @@
-package hu.gamesgeek.websocket.dto;
+package hu.gamesgeek.types.dto;
 
 public class ChatMessageDTO {
 

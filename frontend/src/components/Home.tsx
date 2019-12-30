@@ -1,20 +1,27 @@
 import React from 'react';
 import {UserList} from "./UserList";
 import {Chat} from "./Chat";
-import {ChatMessage, User} from "../util/types";
+import {ChatMessage, Group, User} from "../util/types";
+import {GroupComponent} from "./GroupComponent";
+import {UsersComponent} from "./UsersComponent";
+import {InvitesComponent} from "./InvitesComponent";
+import {GameSettingsComponent} from "./GameSettingsComponent";
 
-type HomeType = {
+type HomeProps = {
+    group?: Group,
+    user: User,
     users: User[],
-    chatMessages: ChatMessage[],
-    sendChatMessage: (text: string) => void
+    invites: User[]
 }
 
-export function Home (props: HomeType) {
+export function Home ({group, user, users, invites}: HomeProps) {
 
     return (
         <div >
-            {/*<UserList users={props.users}/>*/}
-            {/*<Chat chatMessages={props.chatMessages} sendChatMessage={props.sendChatMessage}/>*/}
+            <GameSettingsComponent/>
+            <GroupComponent group={group} user={user}/>
+            <UsersComponent users={users} user={user}/>
+            <InvitesComponent invites={invites} user={user}/>
         </div>
     );
 }

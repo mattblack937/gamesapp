@@ -2,21 +2,23 @@ package hu.gamesgeek;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hu.gamesgeek.game.GameType;
-import hu.gamesgeek.game.Lobby;
-import hu.gamesgeek.restful.user.UserService;
-import hu.gamesgeek.util.ConnectionHandler;
-import hu.gamesgeek.util.LobbyHandler;
-import hu.gamesgeek.websocket.MessageType;
+import hu.gamesgeek.game.Game;
+import hu.gamesgeek.game.Group;
+import hu.gamesgeek.game.amoba.AmobaMoveDTO;
+import hu.gamesgeek.types.GameType;
+import hu.gamesgeek.model.user.UserService;
+import hu.gamesgeek.util.*;
+import hu.gamesgeek.types.MessageType;
 import hu.gamesgeek.websocket.WSMessage;
-import hu.gamesgeek.websocket.dto.UserDTO;
-import hu.gamesgeek.websocket.dto.UserTokenDTO;
+import hu.gamesgeek.types.dto.UserDTO;
+import hu.gamesgeek.types.dto.UserTokenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -28,6 +30,21 @@ public class GameApi {
     UserService userService;
 
     ObjectMapper mapper = new ObjectMapper();
+
+    @GetMapping(path = "/invite/{userId}" )
+    public void invite(@PathVariable String userId, HttpServletRequest request) {
+        UserDTO user = getUserDTOFromRequest(request);
+
+        if (userId == null){
+            return;
+        }
+
+        if (user.getId().equals(userId)){
+            return;
+        }
+
+        GroupHandler.sendInvite(user, userId);
+    }
 
     @GetMapping("/userToken")
     public String getUserToken(HttpServletRequest request) {
@@ -69,9 +86,31 @@ public class GameApi {
         session.setAttribute("user", userService.checkUserLogin(userNameAndPassword.getUserName(), userNameAndPassword.getPassword() ) ) ;
     }
 
-    @PostMapping(path = "/invite", consumes = MediaType.APPLICATION_JSON_VALUE  )
-    public void login2( @RequestBody UserNameAndPassword userNameAndPassword, HttpServletRequest request) {
+
+
+    @PostMapping(path = "/move", consumes = MediaType.APPLICATION_JSON_VALUE  )
+    public void move( @RequestBody String  moveJSON, HttpServletRequest request) {
         UserDTO user = getUserDTOFromRequest(request);
+        Game game = GameHandler.getGameOfUser(user);
+
+        if (game == null){
+            return;
+        }
+
+        Object move = null;
+        switch (game.getGameType()){
+            case AMOBA:
+                try {
+                    move = mapper.readValue(moveJSON, AmobaMoveDTO.class);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+
+        if (game.legal(user, move)){
+            game.move(user, move);
+            GameHandler.updateUsers(game);
+        }
     }
 
     @PostMapping(path = "/post1", consumes = MediaType.APPLICATION_JSON_VALUE  )
@@ -101,16 +140,6 @@ public class GameApi {
         return (UserDTO) request.getSession().getAttribute("user");
     }
 
-    @GetMapping("/create-lobby/{gameType}")
-    public void createLobby(@PathVariable("gameType") String gameType, HttpServletRequest request) {
-        UserDTO user = getUserDTOFromRequest(request);
-
-        Lobby lobby = LobbyHandler.createLobby(GameType.valueOf(gameType));
-
-        LobbyHandler.join(lobby, user.getId());
-
-        lobby.updateUsers();
-    }
 
     @GetMapping("/user")
     public String getUser(HttpServletRequest request) {
@@ -144,6 +173,67 @@ public class GameApi {
         UserDTO user = getUserDTOFromRequest(request);
         return "2";
 
+    }
+
+    @GetMapping("/leave-group")
+    public void leaveGroup(HttpServletRequest request) {
+
+        UserDTO user = getUserDTOFromRequest(request);
+
+        if (GroupHandler.getGroupOfUser(user) == null){
+            return;
+        }
+
+        GroupHandler.leaveGroup(user);
+    }
+
+
+    @PostMapping(path = "/start-game/{gameType}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void startGame(@PathVariable GameType gameType, @RequestBody String gameSettingsJSON, HttpServletRequest request) {
+
+        UserDTO user = getUserDTOFromRequest(request);
+        Group group = GroupHandler.getGroupOfUser(user);
+
+        if (group == null || !group.getOwner().equals(user)){
+            return;
+        }
+
+        Object settings = null;
+        if (gameSettingsJSON != null){
+            settings = GameHandler.readSettingsFromJSON(gameType, gameSettingsJSON);
+        }
+
+        if (!GameHandler.canStartGame(group, gameType, settings)){
+            return;
+        }
+
+        GameHandler.startGame(group, gameType, settings);
+    }
+
+    @GetMapping("/accept-invite/{ownerId}")
+    public void acceptInvite(@PathVariable String ownerId, HttpServletRequest request) {
+
+        UserDTO user = getUserDTOFromRequest(request);
+        UserDTO owner = ServiceHelper.getService(UserService.class).findUserDTOByUserId(ownerId);
+
+        Group groupOfUser = GroupHandler.getGroupOfUser(user);
+        Group groupOfOwner = GroupHandler.getGroupOfUser(owner);
+
+        if (groupOfOwner == groupOfUser && groupOfOwner !=null){
+            return;
+        }
+
+        if (groupOfOwner == null){
+            groupOfOwner = GroupHandler.createGroup(owner);
+        }
+
+        if (groupOfUser == null){
+            groupOfOwner.joinUser(user);
+        } else {
+            groupOfOwner.joinGroup(groupOfUser);
+        }
+
+        GroupHandler.updateGroup(groupOfOwner);
     }
 
 

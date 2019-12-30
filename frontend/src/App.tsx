@@ -1,15 +1,17 @@
 import React, {Component} from 'react';
 import {Link, Redirect, Route, RouteComponentProps, Switch} from "react-router-dom";
 import './css/App.css';
-import {ChatMessage, LobbyType, User} from "./util/types";
+import {ChatMessage, Game, Group, Invite, LobbyType, User} from "./util/types";
 import {Login} from "./components/Login";
 import {GameState, GameType, MessageType} from "./util/enums";
 import {Home} from "./components/Home";
 import {api} from "./util/API";
 import {WebSocketEntity} from "./util/WebSocketEntity";
-import {Game} from "./components/game/Game";
 import {Logout} from "./components/Logout";
-import {Lobby} from "./components/game/Lobby";
+import {GroupComponent} from "./components/GroupComponent";
+import {UsersComponent} from "./components/UsersComponent";
+import {InvitesComponent} from "./components/InvitesComponent";
+import {GameComponent} from "./components/GameComponent";
 
 export type AppState = {
     user?: User,
@@ -17,12 +19,13 @@ export type AppState = {
     users: User[],
     chatMessages: ChatMessage[],
     componentDidMount: boolean,
-    lobby?: LobbyType
+    lobby?: LobbyType,
+    group?: Group,
+    invites: User[],
+    game?: Game
 }
 
-enum MenuEnum {
-    HOME="home", GAME="game", LOBBY="lobby", PEOPLE="people"
-}
+
 
 const initialState = {
     user: undefined,
@@ -30,8 +33,10 @@ const initialState = {
     users: [],
     chatMessages: [],
     componentDidMount: false,
-    activeMenu: MenuEnum.HOME,
-    lobby: undefined
+    lobby: undefined,
+    group: undefined,
+    invites: [],
+    game: undefined
 } as AppState;
 
 export class App extends Component<RouteComponentProps<{}>, AppState> {
@@ -67,35 +72,37 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
             <div className="App">
 
 
-
-
                 {this.state.user &&
                     <Logout/>
                 }
 
                 <header className="App-header">
-                    <div>
-                        <div onClick={ ()=> api.post1()}>
-                            POST1
-                        </div>
-
-                        <div onClick={ ()=> api.post2()}>
-                            POST2
-                        </div>
-
-                        <div onClick={ ()=> api.get1()}>
-                            GET1
-                        </div>
-
-                        <div onClick={ ()=> api.get2()}>
-                            Get2
-                        </div>
-
-                    </div>
 
 
 
-                    <Menu user={this.state.user} />
+
+                    {/*<div>*/}
+                    {/*    <div onClick={ ()=> api.post1()}>*/}
+                    {/*        POST1*/}
+                    {/*    </div>*/}
+
+                    {/*    <div onClick={ ()=> api.post2()}>*/}
+                    {/*        POST2*/}
+                    {/*    </div>*/}
+
+                    {/*    <div onClick={ ()=> api.get1()}>*/}
+                    {/*        GET1*/}
+                    {/*    </div>*/}
+
+                    {/*    <div onClick={ ()=> api.get2()}>*/}
+                    {/*        Get2*/}
+                    {/*    </div>*/}
+
+                    {/*</div>*/}
+
+
+
+                    {/*<Menu user={this.state.user} />*/}
 
                     <Switch>
                         {!this.state.user &&
@@ -104,16 +111,19 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
                             </Route>
                         }
 
+                        {this.state.game &&
+                            <>
+                                <Route path={"/game"}>
+                                    <GameComponent user={this.state.user!} game={this.state.game}/>
+                                </Route>
+                                <Route >
+                                    <Redirect to={"/game"}/>
+                                </Route>
+                            </>
+                        }
+
                         <Route path={"/home"}>
-                            <Home users={this.state.users} chatMessages={this.state.chatMessages} sendChatMessage={this.sendChatMessage}/>
-                        </Route>
-
-                        <Route path={"/game"}>
-                            <Game/>
-                        </Route>
-
-                        <Route path={"/lobby"}>
-                            <Lobby lobby={this.state.lobby} users={this.state.users}/>
+                            <Home user={this.state.user!} users={this.state.users} invites={this.state.invites} group={this.state.group}/>
                         </Route>
 
                         <Redirect to="/home" />
@@ -153,6 +163,16 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
         this.setState({
             chatMessages: this.state.chatMessages.concat(chatMessage)
         });
+    }
+
+    addInvite(fromUser: User) {
+        if (!!this.state.invites.find(invite => invite.id === fromUser.id)){
+            return;
+        }
+
+        this.setState({
+            invites: this.state.invites.concat(fromUser)
+        })
     }
 
     sendChatMessage(text: string) {

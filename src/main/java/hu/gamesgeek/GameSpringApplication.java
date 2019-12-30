@@ -1,7 +1,7 @@
 package hu.gamesgeek;
 
 import hu.gamesgeek.util.ConnectionHandler;
-import hu.gamesgeek.websocket.dto.UserTokenDTO;
+import hu.gamesgeek.types.dto.UserTokenDTO;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;

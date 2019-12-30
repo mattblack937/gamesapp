@@ -1,6 +1,6 @@
 package hu.gamesgeek.websocket.messagehandler;
 
-import hu.gamesgeek.websocket.MessageType;
+import hu.gamesgeek.types.MessageType;
 
 public abstract class AbstractMessageHandler<T extends Object> {
 

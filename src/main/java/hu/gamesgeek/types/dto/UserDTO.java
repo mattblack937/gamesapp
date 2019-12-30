@@ -1,9 +1,8 @@
-package hu.gamesgeek.websocket.dto;
+package hu.gamesgeek.types.dto;
 
-import hu.gamesgeek.restful.user.User;
+import hu.gamesgeek.model.user.User;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class UserDTO {
     String id;
@@ -39,8 +38,7 @@ public class UserDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserDTO userDTO = (UserDTO) o;
-        return Objects.equals(id, userDTO.id) &&
-                Objects.equals(name, userDTO.name);
+        return Objects.equals(id, userDTO.id);
     }
 
     @Override

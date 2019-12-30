@@ -1,6 +1,6 @@
 package hu.gamesgeek;
 
-import hu.gamesgeek.websocket.dto.UserDTO;
+import hu.gamesgeek.types.dto.UserDTO;
 import org.apache.logging.log4j.core.config.Order;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
@@ -20,19 +20,18 @@ public class GameFilter implements Filter {
     private final List<String> allowedOrigins = Arrays.asList("http://localhost:3000");
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        String URI = ((HttpServletRequestWrapper) request).getRequestURI();
+        UserDTO user = (UserDTO) ((HttpServletRequestWrapper) request).getSession().getAttribute("user");
 
         if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
             addHeaders((HttpServletRequest) request, (HttpServletResponse) response);
         }
-
-        UserDTO user = (UserDTO) ((HttpServletRequestWrapper) request).getSession().getAttribute("user");
 
         if (user != null){
             chain.doFilter(request, response);
             return;
         }
 
-        String URI = ((HttpServletRequestWrapper) request).getRequestURI();
         switch (URI){
             case "/user":
             case "/login":

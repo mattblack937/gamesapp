@@ -64,24 +64,29 @@ class API{
         return res;
     }
 
-    public async inviteUser(userId: string) : Promise<boolean> {
-        const res = await fetch(URL + '/invite', {
-            mode: 'cors',
-            credentials: 'include',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                    userName: "sda",
-                    password: "s"
-                }
-            )
-        }).then( res =>{return res.ok });
+    public async inviteUser(userId: string) {
+        console.log("invite2:",userId);
 
-        return res;
+        await fetch(URL + '/invite/' + userId, {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then( res => res.json())
+            .then( res =>{return res})
+            .catch((error=>{return null}));
     }
+
+    public async acceptInvite(userId: string) {
+        await fetch(URL + '/accept-invite/' + userId, {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then( res => res.json())
+            .then( res =>{return res})
+            .catch((error=>{return null}));
+    }
+
+
 
 
 
@@ -145,6 +150,46 @@ class API{
         return res;
     }
 
+    public async startGame(gameType: GameType, settings: any) {
+        const res = await fetch(URL + '/start-game/' + gameType, {
+            mode: 'cors',
+            credentials: 'include',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(settings)
+        });
+    }
+
+
+
+    public async move(moveDTO: any) {
+        const res = await fetch(URL + '/move', {
+            mode: 'cors',
+            credentials: 'include',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(moveDTO)
+        }).then( res =>{return res.ok });
+
+        return res;
+    }
+
+    public async leaveGroup() {
+        let res = await fetch(URL + '/leave-group', {
+            method: 'GET',
+            credentials: 'include'
+        });
+    }
+
+    public async sendGroupMessage(message: string) {
+
+    }
 }
 
 export const api = new API();

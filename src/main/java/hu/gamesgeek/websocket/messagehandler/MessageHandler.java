@@ -1,6 +1,6 @@
 package hu.gamesgeek.websocket.messagehandler;
 
-import hu.gamesgeek.websocket.MessageType;
+import hu.gamesgeek.types.MessageType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
