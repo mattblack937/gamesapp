@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hu.gamesgeek.WSServer;
 import hu.gamesgeek.game.Game;
 import hu.gamesgeek.game.GameAnnotation;
+import hu.gamesgeek.game.GameState;
 import hu.gamesgeek.game.Group;
 import hu.gamesgeek.game.amoba.AmobaDTO;
 import hu.gamesgeek.game.amoba.AmobaSettingsDTO;
 import hu.gamesgeek.model.user.UserService;
 import hu.gamesgeek.types.GameType;
 import hu.gamesgeek.types.MessageType;
+import hu.gamesgeek.types.dto.GameDTO;
 import hu.gamesgeek.types.dto.StateDTO;
 import hu.gamesgeek.types.dto.UserDTO;
 import hu.gamesgeek.websocket.WSMessage;
@@ -93,7 +95,8 @@ public class GameHandler {
         WSMessage wsMessage = new WSMessage();
         wsMessage.setMessageType(MessageType.STATE);
         StateDTO stateDTO = new StateDTO();
-        stateDTO.setGame(game.toGameDTO());
+        GameDTO gameDTO = game.toGameDTO();
+        stateDTO.setGame(gameDTO);
         try {
             wsMessage.setData(mapper.writeValueAsString(stateDTO));
         } catch (JsonProcessingException e) {
@@ -105,6 +108,14 @@ public class GameHandler {
                 WSServer.sendMessage(webSocket, wsMessage);
             }
         }
+
+        if (GameState.ENDED.equals(gameDTO.getGameState())){
+            removeGame(game);
+        }
+    }
+
+    private static void removeGame(Game game) {
+        games.remove(game);
     }
 
     public static Object readSettingsFromJSON(GameType gameType, String gameSettingsJSON) {

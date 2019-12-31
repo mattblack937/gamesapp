@@ -71,13 +71,18 @@
 
 /*LOGOUT*/
 .logout{
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  padding: 10px;
-  margin: 10px;
-  background :lightgray;
-  color: black;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding: 10px;
+    margin: 10px;
+    background :lightgray;
+    color: black;
+    z-index: 1000;
+}
+
+.game-button:hover{
+    cursor: pointer;
 }
 /*LOGOUT*/
 
@@ -129,21 +134,77 @@
   border: 2px solid coral;
 }
 
-.amoba {
-  border: 2px solid cyan;
-}
 
 .amoba div{
   display: flex;
 }
 
-.amoba div div{
-  border: 1px solid cyan;
-  height: 40px;
-  width: 40px;
+.amoba .square{
+  border: 3px solid cyan;
+  height: 100px;
+  width: 100px;
 }
+
+.amoba .square{
+  padding: 10px;
+}
+
+
+.square.empty:hover{
+
+}
+
+.square.empty:hover{
+  background: rgba(255,255,255, 0.5);
+  cursor: pointer;
+}
+
+.amoba .row{
+  display: flex;
+    z-index: 100;
+}
+
 
 .game-settings{
     border: 2px solid red;
 }
 
+
+.amoba_x{
+    fill: yellow;
+}
+
+.amoba_y{
+    fill: none;
+    stroke: yellow;
+}
+
+.amoba-header{
+    position: absolute;
+
+    top: 10px;
+    left: 10px;
+
+    display: grid!important;
+    width: unset!important;
+
+    border: none!important;
+    width: 200px;
+    z-index: 10;
+}
+
+.amoba-header .amoba-header-row{
+    white-space: nowrap;
+    font-size: 30px;
+    height: 40px;
+}
+
+.amoba-header svg{
+    margin-left: 10px;
+    margin-top: 8px;
+}
+
+.amoba-board{
+
+    display: grid!important;
+}

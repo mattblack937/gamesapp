@@ -5,6 +5,15 @@ import hu.gamesgeek.types.dto.UserDTO;
 public class AmobaDTO {
     private Boolean[] squares = new Boolean[9];
     private UserDTO nextPlayer;
+    private UserDTO playerX;
+
+    public UserDTO getPlayerX() {
+        return playerX;
+    }
+
+    public void setPlayerX(UserDTO playerX) {
+        this.playerX = playerX;
+    }
 
     public Boolean[] getSquares() {
         return squares;

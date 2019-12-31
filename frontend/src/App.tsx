@@ -12,6 +12,8 @@ import {GroupComponent} from "./components/GroupComponent";
 import {UsersComponent} from "./components/UsersComponent";
 import {InvitesComponent} from "./components/InvitesComponent";
 import {GameComponent} from "./components/GameComponent";
+import {SVG} from "./components/SVG";
+import {amoba_x} from "./components/game/AmobaComponent";
 
 export type AppState = {
     user?: User,
@@ -71,7 +73,6 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
         return (
             <div className="App">
 
-
                 {this.state.user &&
                     <Logout/>
                 }
@@ -114,7 +115,7 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
                         {this.state.game &&
                             <>
                                 <Route path={"/game"}>
-                                    <GameComponent user={this.state.user!} game={this.state.game}/>
+                                    <GameComponent user={this.state.user!} game={this.state.game} setGameToNull={()=> this.setState({game: undefined})}/>
                                 </Route>
                                 <Route >
                                     <Redirect to={"/game"}/>

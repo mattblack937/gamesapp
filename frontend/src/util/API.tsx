@@ -35,6 +35,7 @@ class API{
     }
 
     public async logout() {
+        console.log("logout");
         let res = await fetch(URL + '/logout', {
             method: 'GET',
             credentials: 'include'

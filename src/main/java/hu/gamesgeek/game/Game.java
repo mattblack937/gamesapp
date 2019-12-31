@@ -15,6 +15,9 @@ public abstract class Game {
     protected UserDTO owner;
     protected List<UserDTO> users;
 
+    public abstract GameState getGameState();
+
+
     public void initialize(Group group, Object settings){
         users = group.getUsers();
         owner = group.getOwner();
@@ -23,6 +26,7 @@ public abstract class Game {
     public GameDTO toGameDTO() {
         GameDTO gameDTO = new GameDTO();
         gameDTO.setGameType(getGameType());
+        gameDTO.setGameState(getGameState());
         try {
             gameDTO.setData(new ObjectMapper().writeValueAsString(getDataDTO()));
         } catch (JsonProcessingException e) {

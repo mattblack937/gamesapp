@@ -12,7 +12,6 @@ export enum GameType {
 
 
 export enum GameState {
-    BROWSING,
-    IN_LOBBY,
-    IN_GAME,
+    IN_PROGRESS = "IN_PROGRESS",
+    ENDED = "ENDED"
 }

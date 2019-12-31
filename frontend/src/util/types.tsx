@@ -1,4 +1,4 @@
-import {GameType, MessageType} from "./enums";
+import {GameState, GameType, MessageType} from "./enums";
 
 export type User = {
     id: string,
@@ -25,6 +25,7 @@ export type Invite = {
 
 export type Game = {
     gameType: GameType,
+    gameState: GameState,
     data: any
 }
 

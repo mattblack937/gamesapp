@@ -1,6 +1,7 @@
 package hu.gamesgeek.types.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import hu.gamesgeek.game.GameState;
 import hu.gamesgeek.types.GameType;
 
 import java.util.List;
@@ -9,6 +10,15 @@ import java.util.List;
 public class GameDTO {
     private GameType gameType;
     private String data;
+    private GameState gameState;
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
 
     public GameType getGameType() {
         return gameType;
@@ -25,4 +35,5 @@ public class GameDTO {
     public void setData(String data) {
         this.data = data;
     }
+
 }

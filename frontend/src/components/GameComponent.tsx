@@ -7,13 +7,14 @@ import {AmobaComponent, AmobaDTO} from "./game/AmobaComponent";
 
 type GameComponentProps = {
     user: User
-    game: Game
+    game: Game,
+    setGameToNull: ()=> void
 }
 
-export function GameComponent ( { user, game} : GameComponentProps) {
+export function GameComponent ( { user, game, setGameToNull} : GameComponentProps) {
     switch (game.gameType) {
         case GameType.AMOBA.valueOf():
-            return  <AmobaComponent user={user} amobaDTO={(JSON.parse(game.data) as AmobaDTO)} />;
+            return  <AmobaComponent user={user} amobaDTO={(JSON.parse(game.data) as AmobaDTO)} gameState={game.gameState} setGameToNull={setGameToNull}/>;
 
         default: return null;
     }
