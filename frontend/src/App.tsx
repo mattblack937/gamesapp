@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link, Redirect, Route, RouteComponentProps, Switch} from "react-router-dom";
 import './css/App.css';
-import {ChatMessage, Game, Group, Invite, LobbyType, User} from "./util/types";
+import {ChatMessage, ContextProps, Game, Group, Invite, LobbyType, User} from "./util/types";
 import {Login} from "./components/Login";
 import {GameState, GameType, MessageType} from "./util/enums";
 import {Home} from "./components/Home";
@@ -14,55 +14,27 @@ import {InvitesComponent} from "./components/InvitesComponent";
 import {GameComponent} from "./components/GameComponent";
 import {SVG} from "./components/SVG";
 import {amoba_x} from "./components/game/AmobaComponent";
-
-export type AppState = {
-    user?: User,
-    webSocketEntity?: WebSocketEntity,
-    users: User[],
-    chatMessages: ChatMessage[],
-    componentDidMount: boolean,
-    lobby?: LobbyType,
-    group?: Group,
-    invites: User[],
-    game?: Game
-}
+import {MainComponent} from "./components/MainComponent";
 
 
-
-const initialState = {
-    user: undefined,
-    webSocketEntity: undefined,
-    users: [],
-    chatMessages: [],
-    componentDidMount: false,
-    lobby: undefined,
-    group: undefined,
-    invites: [],
-    game: undefined
-} as AppState;
-
+export const AppContext = React.createContext<Partial<ContextProps>>({});
 export class App extends Component<RouteComponentProps<{}>, AppState> {
     constructor(props: any){
         super(props);
-
         this.registerSocket = this.registerSocket.bind(this);
         this.setUser = this.setUser.bind(this);
         this.sendChatMessage = this.sendChatMessage.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
-
         this.state = initialState;
     }
 
     async componentDidMount() {
-
         const user = await api.getUser();
         await user && !this.state.webSocketEntity && this.registerSocket();
-
         this.setState({
             user,
             componentDidMount: true
         });
-
     }
 
     render(){
@@ -71,66 +43,61 @@ export class App extends Component<RouteComponentProps<{}>, AppState> {
         }
 
         return (
-            <div className="App">
 
-                {this.state.user &&
+            <AppContext.Provider value={ {
+                authenticated: true,
+            } }>
+                <div className="App">
+                    {this.state.user &&
                     <Logout/>
-                }
+                    }
 
-                <header className="App-header">
-
-
-
-
-                    {/*<div>*/}
-                    {/*    <div onClick={ ()=> api.post1()}>*/}
-                    {/*        POST1*/}
-                    {/*    </div>*/}
-
-                    {/*    <div onClick={ ()=> api.post2()}>*/}
-                    {/*        POST2*/}
-                    {/*    </div>*/}
-
-                    {/*    <div onClick={ ()=> api.get1()}>*/}
-                    {/*        GET1*/}
-                    {/*    </div>*/}
-
-                    {/*    <div onClick={ ()=> api.get2()}>*/}
-                    {/*        Get2*/}
-                    {/*    </div>*/}
-
-                    {/*</div>*/}
+                    <header className="App-header">
 
 
 
-                    {/*<Menu user={this.state.user} />*/}
 
-                    <Switch>
-                        {!this.state.user &&
+                        {/*<div>*/}
+                        {/*    <div onClick={ ()=> api.post1()}>*/}
+                        {/*        POST1*/}
+                        {/*    </div>*/}
+
+                        {/*    <div onClick={ ()=> api.post2()}>*/}
+                        {/*        POST2*/}
+                        {/*    </div>*/}
+
+                        {/*    <div onClick={ ()=> api.get1()}>*/}
+                        {/*        GET1*/}
+                        {/*    </div>*/}
+
+                        {/*    <div onClick={ ()=> api.get2()}>*/}
+                        {/*        Get2*/}
+                        {/*    </div>*/}
+
+                        {/*</div>*/}
+
+
+
+                        {/*<Menu user={this.state.user} />*/}
+
+                        <Switch>
+                            {!this.state.user &&
                             <Route>
                                 <Login refresh={this.componentDidMount}/>
                             </Route>
-                        }
+                            }
 
-                        {this.state.game &&
-                            <>
-                                <Route path={"/game"}>
-                                    <GameComponent user={this.state.user!} game={this.state.game} setGameToNull={()=> this.setState({game: undefined})}/>
-                                </Route>
-                                <Route >
-                                    <Redirect to={"/game"}/>
-                                </Route>
-                            </>
-                        }
+                            <Route exact={true} path={"/"} >
+                                hello
+                                <MainComponent />
+                            </Route>
 
-                        <Route path={"/home"}>
-                            <Home user={this.state.user!} users={this.state.users} invites={this.state.invites} group={this.state.group}/>
-                        </Route>
+                            <Redirect to="" />
+                        </Switch>
+                    </header>
+                </div>
 
-                        <Redirect to="/home" />
-                    </Switch>
-                </header>
-            </div>
+            </AppContext.Provider>
         );
     }
 
@@ -216,5 +183,30 @@ function Menu({ user }: MenuProps){
         </div>
     );
 }
+
+export type AppState = {
+    user?: User,
+    webSocketEntity?: WebSocketEntity,
+    users: User[],
+    chatMessages: ChatMessage[],
+    componentDidMount: boolean,
+    lobby?: LobbyType,
+    group?: Group,
+    invites: User[],
+    game?: Game
+}
+
+const initialState = {
+    user: undefined,
+    webSocketEntity: undefined,
+    users: [],
+    chatMessages: [],
+    componentDidMount: false,
+    lobby: undefined,
+    group: undefined,
+    invites: [],
+    game: undefined
+} as AppState;
+
 
 export default App;

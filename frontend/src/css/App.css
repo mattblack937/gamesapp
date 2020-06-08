@@ -49,10 +49,16 @@
 
 /*LOGIN*/
 .login{
-  background: blue;
-  width: 480px;
-  padding: 10px;
-  display: grid;
+    background: blue;
+    width: 480px;
+    padding: 10px;
+    display: grid;
+    user-select: none;
+}
+
+.login.active{
+    background: green;
+    cursor: pointer;
 }
 
 .login input{
@@ -61,12 +67,13 @@
   font-size: 30px;
 }
 
-.login button{
-  margin: auto;
-  width: 150px;
-  height: 30px;
-  font-size: 20px;
+.login div{
+    margin: auto;
+    width: 150px;
+    height: 30px;
+    font-size: 20px;
 }
+
 /*LOGIN*/
 
 /*LOGOUT*/
@@ -161,7 +168,7 @@
 
 .amoba .row{
   display: flex;
-    z-index: 100;
+  z-index: 100;
 }
 
 
@@ -174,7 +181,7 @@
     fill: yellow;
 }
 
-.amoba_y{
+.amoba_o{
     fill: none;
     stroke: yellow;
 }
@@ -207,4 +214,14 @@
 .amoba-board{
 
     display: grid!important;
+}
+
+.amoba{
+    stroke: yellow;
+    user-select: none;
+}
+
+.amoba_o{
+    fill: none;
+    stroke: yellow;
 }

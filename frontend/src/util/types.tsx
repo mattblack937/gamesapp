@@ -1,5 +1,11 @@
 import {GameState, GameType, MessageType} from "./enums";
 
+export type ContextProps = {
+    authenticated: boolean,
+    lang: string,
+    theme: string
+};
+
 export type User = {
     id: string,
     name: string
