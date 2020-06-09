@@ -25,8 +25,7 @@ type AppState = {
     lobby?: LobbyType,
     group?: Group,
     invites: User[],
-    game?: Game,
-    webSocket?: WebSocket
+    game?: Game
 }
 
 export function App () {
@@ -35,8 +34,8 @@ export function App () {
     useEffect( () => {
         getUser()
     }, []);
-    useEffect( () => {
-        if(appState.user && !appState.webSocket){
+    useEffect(() => {
+        if(appState.user && !webSocket){
             registerWebSocket()
         }
     }, [appState.user]);
@@ -129,11 +128,12 @@ export function App () {
 
     async function logout() {
         await api.logout();
-        appState.webSocket && appState.webSocket.close();
+        webSocket && webSocket.close();
+        webSocket = null;
         setAppState(getInitialAppState());
     }
 
-    function getInitialAppState() {
+    function getInitialAppState() : AppState {
         return ({
             user: undefined,
             chatMessages: [],
@@ -142,10 +142,8 @@ export function App () {
             group: undefined,
             invites: [],
             lobby: undefined,
-            users: [],
-            webSocketEntity: undefined,
-            webSocket: undefined
-        } as AppState);
+            users: []
+        });
     }
 
 }
