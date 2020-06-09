@@ -13,6 +13,7 @@ class API{
     }
 
     public async getUserToken(): Promise<string>{
+        console.log("getUserToken");
         let message = await fetch(URL + "/userToken", {
             method: 'GET',
             credentials: 'include'
@@ -28,6 +29,7 @@ class API{
             method: 'GET',
             credentials: 'include'
         }).then( res => res.json()).then( res =>{return res}).catch((error=>{return null}));
+        console.log("api.getUser" + res);
         return res as User;
     }
 
