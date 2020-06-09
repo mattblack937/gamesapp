@@ -1,14 +1,30 @@
 import {ChatMessage, User, UserToken, WSMessage} from "./types";
 import {MessageType} from "./enums";
-import App, {AppState} from "../App";
+import App, {AppContext} from "../App";
+import {useContext} from "react";
+import {log} from "util";
 
 let webSocket = null as WebSocket | null;
 
 export class WebSocketEntity {
-    constructor(app: App, token: string){
-        webSocket && webSocket.close();
 
+    constructor(token: string){
+        const { logout, user } = useContext(AppContext);
+
+        webSocket && webSocket.close();
         webSocket = new WebSocket("ws://localhost:9000") as WebSocket;
+
+        webSocket.onopen = (response) => {
+            this.authenticateWebSocket(user!.id, token);
+        };
+
+        webSocket.onerror = (response) => {
+            logout!();
+        };
+
+        webSocket.onclose = (response) => {
+            logout!();
+        };
 
         webSocket.onmessage = (json) => {
             console.log(json);
@@ -16,28 +32,15 @@ export class WebSocketEntity {
             console.log(message);
             switch (message.messageType) {
                 case MessageType.STATE.valueOf():
-                    app.updateState(JSON.parse(message.data) as AppState);
+                    // app.updateState(JSON.parse(message.data) as AppState);
                     break;
                 case MessageType.CHAT_MESSAGE.valueOf():
-                    app.addChatMessage(JSON.parse(message.data) as ChatMessage);
+                    // app.addChatMessage(JSON.parse(message.data) as ChatMessage);
                     break;
                 case MessageType.INVITE.valueOf():
-                    app.addInvite(JSON.parse(message.data) as User);
+                    // app.addInvite(JSON.parse(message.data) as User);
                     break;
             }
-        };
-
-        webSocket.onopen = (response) => {
-            app.state.user &&
-            this.authenticateWebSocket(app.state.user.id, token);
-        };
-
-        webSocket.onerror = (response) => {
-            app.onLogout();
-        };
-
-        webSocket.onclose = (response) => {
-            app.onLogout();
         };
     }
 

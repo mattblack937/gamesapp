@@ -24,18 +24,14 @@ class API{
     }
 
     public async getUser(): Promise<User>{
-            let res = await fetch(URL + '/user', {
-                method: 'GET',
-                credentials: 'include'
-              })
-                .then( res => res.json())
-                .then( res =>{return res})
-                .catch((error=>{return null}));
-            return res as User;
+        let res = await fetch(URL + '/user', {
+            method: 'GET',
+            credentials: 'include'
+        }).then( res => res.json()).then( res =>{return res}).catch((error=>{return null}));
+        return res as User;
     }
 
     public async logout() {
-        console.log("logout");
         let res = await fetch(URL + '/logout', {
             method: 'GET',
             credentials: 'include'

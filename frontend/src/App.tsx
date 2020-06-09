@@ -1,212 +1,153 @@
-import React, {Component} from 'react';
-import {Link, Redirect, Route, RouteComponentProps, Switch} from "react-router-dom";
+import React, {useEffect, useState} from 'react';
+import {Redirect, Route, Switch} from "react-router-dom";
 import './css/App.css';
-import {ChatMessage, ContextProps, Game, Group, Invite, LobbyType, User} from "./util/types";
+import {ChatMessage, Game, Group, LobbyType, User, WSMessage} from "./util/types";
 import {Login} from "./components/Login";
-import {GameState, GameType, MessageType} from "./util/enums";
-import {Home} from "./components/Home";
+import {MessageType} from "./util/enums";
 import {api} from "./util/API";
-import {WebSocketEntity} from "./util/WebSocketEntity";
 import {Logout} from "./components/Logout";
-import {GroupComponent} from "./components/GroupComponent";
-import {UsersComponent} from "./components/UsersComponent";
-import {InvitesComponent} from "./components/InvitesComponent";
-import {GameComponent} from "./components/GameComponent";
-import {SVG} from "./components/SVG";
-import {amoba_x} from "./components/game/AmobaComponent";
 import {MainComponent} from "./components/MainComponent";
 
-
 export const AppContext = React.createContext<Partial<ContextProps>>({});
-export class App extends Component<RouteComponentProps<{}>, AppState> {
-    constructor(props: any){
-        super(props);
-        this.registerSocket = this.registerSocket.bind(this);
-        this.setUser = this.setUser.bind(this);
-        this.sendChatMessage = this.sendChatMessage.bind(this);
-        this.componentDidMount = this.componentDidMount.bind(this);
-        this.state = initialState;
-    }
+let webSocket: null | WebSocket = null;
 
-    async componentDidMount() {
-        const user = await api.getUser();
-        await user && !this.state.webSocketEntity && this.registerSocket();
-        this.setState({
-            user,
-            componentDidMount: true
-        });
-    }
+export type ContextProps = {
+    login: (userName: string, password: string)=>{}
+    logout: ()=>{}
+    user: User
+};
 
-    render(){
-        if(!this.state || !this.state.componentDidMount) {
-            return (<div >loading...</div>);
-        }
-
-        return (
-
-            <AppContext.Provider value={ {
-                authenticated: true,
-            } }>
-                <div className="App">
-                    {this.state.user &&
-                    <Logout/>
-                    }
-
-                    <header className="App-header">
-
-
-
-
-                        {/*<div>*/}
-                        {/*    <div onClick={ ()=> api.post1()}>*/}
-                        {/*        POST1*/}
-                        {/*    </div>*/}
-
-                        {/*    <div onClick={ ()=> api.post2()}>*/}
-                        {/*        POST2*/}
-                        {/*    </div>*/}
-
-                        {/*    <div onClick={ ()=> api.get1()}>*/}
-                        {/*        GET1*/}
-                        {/*    </div>*/}
-
-                        {/*    <div onClick={ ()=> api.get2()}>*/}
-                        {/*        Get2*/}
-                        {/*    </div>*/}
-
-                        {/*</div>*/}
-
-
-
-                        {/*<Menu user={this.state.user} />*/}
-
-                        <Switch>
-                            {!this.state.user &&
-                            <Route>
-                                <Login refresh={this.componentDidMount}/>
-                            </Route>
-                            }
-
-                            <Route exact={true} path={"/"} >
-                                hello
-                                <MainComponent />
-                            </Route>
-
-                            <Redirect to="" />
-                        </Switch>
-                    </header>
-                </div>
-
-            </AppContext.Provider>
-        );
-    }
-
-    async registerSocket(){
-        let token = await api.getUserToken();
-        if (token){
-            let webSocketEntity = new WebSocketEntity(this, token);
-            this.setState({
-                webSocketEntity: webSocketEntity
-            });
-        }
-    }
-
-    setUser(user: User) {
-        this.setState({
-            user
-        });
-    }
-
-    sendMessage(data: any, messageType: MessageType){
-        this.state.webSocketEntity!.sendMessage(data, messageType);
-    }
-
-    setUsers(users: User[]) {
-        this.setState({
-            users
-        });
-    }
-
-    addChatMessage(chatMessage: ChatMessage) {
-        this.setState({
-            chatMessages: this.state.chatMessages.concat(chatMessage)
-        });
-    }
-
-    addInvite(fromUser: User) {
-        if (!!this.state.invites.find(invite => invite.id === fromUser.id)){
-            return;
-        }
-
-        this.setState({
-            invites: this.state.invites.concat(fromUser)
-        })
-    }
-
-    sendChatMessage(text: string) {
-        this.sendMessage({message: text} as ChatMessage, MessageType.CHAT_MESSAGE);
-    }
-
-    updateState(appState: AppState) {
-        this.setState({...appState});
-    }
-
-    async onLogout() {
-        this.setState(initialState, () => {
-            this.componentDidMount();
-        });
-    }
-}
-
-type MenuProps = {
-    user?: User
-}
-
-function Menu({ user }: MenuProps){
-
-    if (!user){
-        return (null);
-    }
-
-    return (
-        <div className={"menu-container"}>
-            <div className={"menu-element"}>
-                <Link to={"/home"}>
-                    HOME
-                </Link>
-            </div>
-            <div className={"menu-element"}>
-                <Link to={"/lobby"}>
-                    LOBBY
-                </Link>
-            </div>
-        </div>
-    );
-}
-
-export type AppState = {
+type AppState = {
     user?: User,
-    webSocketEntity?: WebSocketEntity,
     users: User[],
     chatMessages: ChatMessage[],
     componentDidMount: boolean,
     lobby?: LobbyType,
     group?: Group,
     invites: User[],
-    game?: Game
+    game?: Game,
+    webSocket?: WebSocket
 }
 
-const initialState = {
-    user: undefined,
-    webSocketEntity: undefined,
-    users: [],
-    chatMessages: [],
-    componentDidMount: false,
-    lobby: undefined,
-    group: undefined,
-    invites: [],
-    game: undefined
-} as AppState;
+export function App () {
 
+    const [appState, setAppState] = useState<AppState>(getInitialAppState());
+    useEffect( () => {
+        getUser()
+    }, []);
+    useEffect( () => {
+        if(appState.user && !appState.webSocket){
+            registerWebSocket()
+        }
+    }, [appState.user]);
+
+    return (
+        <AppContext.Provider value={{
+            login: (userName, password)=> login(userName, password),
+            logout: ()=> logout(),
+            user: appState.user
+        }}>
+            <div className="App">
+                {appState.user && <Logout/>}
+                <header className="App-header">
+                    <Switch>
+                        { !appState.user &&
+                        <Route>
+                            <Login/>
+                        </Route>
+                        }
+
+                        <Route exact={true} path={"/"} >
+                            hello
+                            <MainComponent />
+                        </Route>
+
+                        <Redirect to="" />
+                    </Switch>
+                </header>
+            </div>
+        </AppContext.Provider>
+    );
+
+    async function login(userName: string, password: string) {
+        await api.login(userName, password);
+        await getUser();
+    }
+
+    async function getUser(){
+        setAppState({ ...appState,
+            user: await api.getUser()
+        });
+    }
+
+    function sendMessage(data: any, messageType: MessageType){
+        let messageDto = JSON.stringify({
+                data: JSON.stringify(data),
+                messageType: messageType
+        } as WSMessage);
+        webSocket && webSocket.send(messageDto);
+    }
+
+
+    async function registerWebSocket(){
+        webSocket && webSocket.close();
+        let token = await api.getUserToken();
+        webSocket = new WebSocket("ws://localhost:9000");
+
+        webSocket.onopen = async (response) => {
+            sendMessage({
+                userId: appState.user!.id,
+                token
+            }, MessageType.USER_TOKEN)
+        };
+
+        webSocket.onerror = (response) => {
+            setAppState(getInitialAppState);
+        };
+
+        webSocket.onclose = (response) => {
+            setAppState(getInitialAppState);
+        };
+
+        webSocket.onmessage = (json) => {
+            console.log(json);
+            let message = JSON.parse(json.data) as WSMessage;
+            console.log(message);
+            switch (message.messageType) {
+                case MessageType.STATE.valueOf():
+                    // app.updateState(JSON.parse(message.data) as AppState);
+                    break;
+                case MessageType.CHAT_MESSAGE.valueOf():
+                    // app.addChatMessage(JSON.parse(message.data) as ChatMessage);
+                    break;
+                case MessageType.INVITE.valueOf():
+                    // app.addInvite(JSON.parse(message.data) as User);
+                    break;
+            }
+        };
+    }
+
+    async function logout() {
+        await api.logout();
+        appState.webSocket && appState.webSocket.close();
+        setAppState(getInitialAppState());
+    }
+
+    function getInitialAppState() {
+        return ({
+            user: undefined,
+            chatMessages: [],
+            componentDidMount: false,
+            game: undefined,
+            group: undefined,
+            invites: [],
+            lobby: undefined,
+            users: [],
+            webSocketEntity: undefined,
+            webSocket: undefined
+        } as AppState);
+    }
+
+}
 
 export default App;
