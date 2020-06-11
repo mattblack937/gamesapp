@@ -15,70 +15,50 @@ export const AppContext = React.createContext<Partial<ContextProps>>({});
 export type ContextProps = {
     login: (userName: string, password: string)=>{}
     logout: ()=>{}
-    user: User | null;
+    user: User | null
+    authenticated: boolean
 };
 
-type AppState = {
-    authenticated: boolean,
-    user?: User,
-    webSocket: WebSocket| null,
-    users: User[],
-    chatMessages: ChatMessage[],
-    componentDidMount: boolean,
-    lobby?: LobbyType,
-    group?: Group,
-    invites: User[],
-    game?: Game
-}
-
 export function App () {
+    const [user, setUser] = useState<User | null | undefined>(undefined);
+    const [webSocket, setWebsocket] = useState<WebSocket | null>(null);
+    const authenticated = !! user;
 
-    const [appState, setAppState] = useState<AppState>(getInitialAppState());
+    useEffect(() => {
+        console.log("useEffect0");
+    }, []);
 
-    useEffect(  () => {
-        async function asyncF(){
-            console.log("useEffect 1");
-            if(appState.user === undefined){
-                await getUser();
+    useEffect(() => {
+        async function f(){
+            console.log("useEffect1");
+            if(user === undefined){
+                let u = await fetchUser();
+            } else {
+                createNewWebSocket(user);
             }
-        }asyncF()}, [appState.user]);
-
-    useEffect(  () => {
-        async function asyncF(){
-            console.log("useEffect 2");
-            setAppState({...appState,
-                authenticated: appState.user != null
-            })
-        }asyncF()}, [appState.user]);
-
-    useEffect(  () => {
-        async function asyncF(){
-            console.log("useEffect 3");
-            await reConnectWebSocket();
-            console.log("useEffect 3" , appState.webSocket);
-        }asyncF()}, [appState.authenticated]);
-
-
-
+        }
+        f();
+    }, [user]);
 
     return (
         <AppContext.Provider value={{
-            login: (userName, password)=> login(userName, password),
-            logout: ()=> logout(),
-            user: appState.user
+            login,
+            logout,
+            user,
+            authenticated
         }}>
             <div className="App">
 
-                {"authenticated: "+appState.authenticated}
+                {"authenticated: " + authenticated}
 
-                {"  user: "+ (appState.user && appState.user.name)}
+                {"  user: "+ (user && user.name)}
 
-                {"   webSocket: "+appState.webSocket}
+                {"   webSocket: "+webSocket}
 
-                {appState.authenticated && <Logout/>}
+                {authenticated && <Logout/>}
                 <header className="App-header">
                     <Switch>
-                        { !appState.authenticated &&
+                        { !authenticated &&
                         <Route>
                             <Login/>
                         </Route>
@@ -96,12 +76,11 @@ export function App () {
         </AppContext.Provider>
     );
 
-    async function getUser(){
+    async function fetchUser(){
+        console.log("fetchUser");
         let user = await api.getUser();
-        console.log("getUser: " + (user && user.name));
-        setAppState({ ...appState,
-            user: user
-        });
+        setUser(user);
+        return user;
     }
 
     function sendMessage(data: any, messageType: MessageType){
@@ -109,121 +88,96 @@ export function App () {
                 data: JSON.stringify(data),
                 messageType: messageType
         } as WSMessage);
-        console.log("sendMessage: ", appState.webSocket, messageDto )
-        appState.webSocket && appState.webSocket.send(messageDto);
+        // console.log(messageDto)
+        webSocket && webSocket.send(messageDto);
     }
 
 
-    async function reConnectWebSocket(){
-        console.log("reConnectWebSocket", appState.webSocket);
-        appState.webSocket && appState.webSocket.close();
+    function setInitialState() {
+        console.log("setInitialState");
+        setUser(undefined);
+        setWebsocket(null);
+    }
 
-        console.log("reConnectWebSocket.appState.user: " + appState.user);
-        if(!appState.user){
-            await setAppState({...appState,
-                webSocket: null
-            });
+    async function createNewWebSocket(user: User | null){
+        console.log("createNewWebSocket");
+        webSocket && webSocket.close();
+
+        if(!user){
+            setWebsocket(null);
             return;
+        } else {
+
+            let webSocket = new WebSocket("ws://localhost:9000") as WebSocket;
+            {
+                //////////////////////////////
+
+                webSocket.onmessage = (json) => {
+                    console.log(json);
+                    let message = JSON.parse(json.data) as WSMessage;
+                    console.log(message);
+                    switch (message.messageType) {
+                        case MessageType.STATE.valueOf():
+                            // app.updateState(JSON.parse(message.data) as AppState);
+                            break;
+                        case MessageType.CHAT_MESSAGE.valueOf():
+                            // app.addChatMessage(JSON.parse(message.data) as ChatMessage);
+                            break;
+                        case MessageType.INVITE.valueOf():
+                            // app.addInvite(JSON.parse(message.data) as User);
+                            break;
+                    }
+                };
+
+                //////////////////////////////
+
+                webSocket.onerror = (response) => {
+                    console.log("onError");
+                    webSocket && webSocket.close();
+                    setInitialState();
+                };
+
+                //////////////////////////////
+
+                webSocket.onclose = (response) => {
+                    console.log("onclose");
+                    webSocket && webSocket.close();
+                    setInitialState()
+                };
+
+                //////////////////////////////
+
+                webSocket.onopen = async (response) => {
+                    console.log("onOpen");
+                    let token = await api.getUserToken();
+                    let messageDto = JSON.stringify({
+                        data: JSON.stringify({
+                            userId: user.id,
+                            token
+                        }),
+                        messageType: MessageType.USER_TOKEN
+                    } as WSMessage);
+                    webSocket.send(messageDto);
+                };
+
+                //////////////////////////////
+            }
+
+            setWebsocket(webSocket);
         }
-
-        let token = await api.getUserToken();
-
-        let webSocket = new WebSocket("ws://localhost:9000") as WebSocket;
-
-        console.log("reConnectWebSocket.webSocket: " + webSocket);
-
-        {
-            //////////////////////////////
-
-            webSocket.onmessage = (json) => {
-                console.log(json);
-                let message = JSON.parse(json.data) as WSMessage;
-                console.log(message);
-                switch (message.messageType) {
-                    case MessageType.STATE.valueOf():
-                        // app.updateState(JSON.parse(message.data) as AppState);
-                        break;
-                    case MessageType.CHAT_MESSAGE.valueOf():
-                        // app.addChatMessage(JSON.parse(message.data) as ChatMessage);
-                        break;
-                    case MessageType.INVITE.valueOf():
-                        // app.addInvite(JSON.parse(message.data) as User);
-                        break;
-                }
-            };
-
-            //////////////////////////////
-
-            webSocket.onerror = (response) => {
-                console.log("onerror");
-                appState.webSocket && appState.webSocket.close();
-                setAppState(getInitialAppState);
-            };
-
-            //////////////////////////////
-
-            webSocket.onclose = (response) => {
-                console.log("onclose");
-                setAppState(getInitialAppState);
-            };
-
-            //////////////////////////////
-
-            webSocket.onopen = (response) => {
-                console.log("onOpen");
-                let messageDto = JSON.stringify({
-                    data: JSON.stringify({
-                        userId: appState.user!.id,
-                        token
-                    }),
-                    messageType: MessageType.USER_TOKEN
-                } as WSMessage);
-                console.log("onOpen: ", webSocket, appState.webSocket, messageDto);
-                webSocket && webSocket.send(messageDto);
-            };
-
-            //////////////////////////////
-        }
-
-        console.log("reConnectWebSocket.appState1:", appState);
-
-        console.log("reConnectWebSocket.appState1:", webSocket);
-
-        await setAppState({...appState,
-            webSocket});
-
-        console.log("reConnectWebSocket.appState2:", appState);
     }
 
     async function login(userName: string, password: string) {
         console.log("login");
         await api.login(userName, password);
-        await getUser();
+        fetchUser();
     }
 
     async function logout() {
-        console.log("logout1")
-        appState.webSocket && await appState.webSocket.close();
-        console.log("logout2")
+        console.log("logout");
+        webSocket && webSocket.close();
         await api.logout();
-        console.log("logout3")
-        await setAppState(getInitialAppState());
-        console.log("logout4")
-    }
-
-    function getInitialAppState() : AppState {
-        return ({
-            authenticated: false,
-            user: undefined,
-            webSocket: null,
-            chatMessages: [],
-            componentDidMount: false,
-            game: undefined,
-            group: undefined,
-            invites: [],
-            lobby: undefined,
-            users: []
-        });
+        setInitialState();
     }
 
 }
