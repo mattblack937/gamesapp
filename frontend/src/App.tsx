@@ -1,22 +1,26 @@
 import React, {useEffect, useState} from 'react';
 import {Redirect, Route, Switch} from "react-router-dom";
-import './css/App.css';
+import './css/app.css';
+
 import {ChatMessage, Game, Group, LobbyType, User, WSMessage} from "./util/types";
 import {Login} from "./components/Login";
 import {MessageType} from "./util/enums";
 import {api} from "./util/API";
-import {Logout} from "./components/Logout";
+
 import {MainComponent} from "./components/MainComponent";
 import {async} from "q";
 import {func} from "prop-types";
+import {Header} from "./components/Header";
 
 export const AppContext = React.createContext<Partial<ContextProps>>({});
+
+export const LOG_ON = true;
+
 
 export type ContextProps = {
     login: (userName: string, password: string)=>{}
     logout: ()=>{}
     user: User | null
-    authenticated: boolean
 };
 
 export function App () {
@@ -25,97 +29,89 @@ export function App () {
     const authenticated = !! user;
 
     useEffect(() => {
-        console.log("useEffect0");
+        LOG_ON && console.log("HERE WE GO!");
     }, []);
 
     useEffect(() => {
-        async function f(){
-            console.log("useEffect1");
-            if(user === undefined){
-                let u = await fetchUser();
-            } else {
-                createNewWebSocket(user);
-            }
+        LOG_ON && console.log("useEffect START");
+        if(user === undefined){
+            setInitialState();
+            fetchUser();
+        } else {
+            createNewWebSocket(user);
         }
-        f();
+        LOG_ON && console.log("useEffect END");
     }, [user]);
 
+
     return (
-        <AppContext.Provider value={{
-            login,
-            logout,
-            user,
-            authenticated
-        }}>
-            <div className="App">
+        <AppContext.Provider
+            value={{
+                login,
+                logout,
+                user
+            }}>
+            <div className="app">
+                <Switch>
+                    { !user &&
+                    <Route>
+                        <Login/>
+                    </Route>
+                    }
 
-                {"authenticated: " + authenticated}
+                    <Route exact={true} path={"/"} >
+                        <Header />
+                        <MainComponent />
+                    </Route>
 
-                {"  user: "+ (user && user.name)}
-
-                {"   webSocket: "+webSocket}
-
-                {authenticated && <Logout/>}
-                <header className="App-header">
-                    <Switch>
-                        { !authenticated &&
-                        <Route>
-                            <Login/>
-                        </Route>
-                        }
-
-                        <Route exact={true} path={"/"} >
-                            hello
-                            <MainComponent />
-                        </Route>
-
-                        <Redirect to="" />
-                    </Switch>
-                </header>
+                    <Redirect to="" />
+                </Switch>
             </div>
         </AppContext.Provider>
     );
 
     async function fetchUser(){
-        console.log("fetchUser");
+        LOG_ON && console.log("fetchUser START");
         let user = await api.getUser();
         setUser(user);
-        return user;
+        LOG_ON && console.log("fetchUser END");
     }
 
     function sendMessage(data: any, messageType: MessageType){
+        LOG_ON && console.log("sendMessage: ",messageType, data);
         let messageDto = JSON.stringify({
                 data: JSON.stringify(data),
                 messageType: messageType
         } as WSMessage);
-        // console.log(messageDto)
         webSocket && webSocket.send(messageDto);
     }
 
-
     function setInitialState() {
-        console.log("setInitialState");
+        LOG_ON && console.log("setInitialState START");
         setUser(undefined);
+        webSocket && webSocket.close();
         setWebsocket(null);
+        LOG_ON && console.log("setInitialState END");
     }
 
     async function createNewWebSocket(user: User | null){
-        console.log("createNewWebSocket");
+        LOG_ON && console.log("createNewWebSocket START");
+
         webSocket && webSocket.close();
 
         if(!user){
             setWebsocket(null);
+            LOG_ON && console.log("createNewWebSocket END");
             return;
         } else {
-
+            let token = await api.getUserToken();
             let webSocket = new WebSocket("ws://localhost:9000") as WebSocket;
+
             {
                 //////////////////////////////
-
                 webSocket.onmessage = (json) => {
-                    console.log(json);
                     let message = JSON.parse(json.data) as WSMessage;
-                    console.log(message);
+                    LOG_ON && console.log("onmessage: ", message);
                     switch (message.messageType) {
                         case MessageType.STATE.valueOf():
                             // app.updateState(JSON.parse(message.data) as AppState);
@@ -132,24 +128,24 @@ export function App () {
                 //////////////////////////////
 
                 webSocket.onerror = (response) => {
-                    console.log("onError");
-                    webSocket && webSocket.close();
-                    setInitialState();
+                    LOG_ON && console.log("onError START");
+                    setUser(undefined);
+                    LOG_ON && console.log("onError END");
                 };
 
                 //////////////////////////////
 
                 webSocket.onclose = (response) => {
-                    console.log("onclose");
-                    webSocket && webSocket.close();
-                    setInitialState()
+                    LOG_ON && console.log("onclose START");
+                    setUser(undefined);
+                    LOG_ON && console.log("onclose END");
                 };
 
                 //////////////////////////////
 
                 webSocket.onopen = async (response) => {
-                    console.log("onOpen");
-                    let token = await api.getUserToken();
+                    LOG_ON && console.log("onOpen START");
+
                     let messageDto = JSON.stringify({
                         data: JSON.stringify({
                             userId: user.id,
@@ -158,6 +154,7 @@ export function App () {
                         messageType: MessageType.USER_TOKEN
                     } as WSMessage);
                     webSocket.send(messageDto);
+                    LOG_ON && console.log("onOpen END");
                 };
 
                 //////////////////////////////
@@ -165,19 +162,22 @@ export function App () {
 
             setWebsocket(webSocket);
         }
+
+        LOG_ON && console.log("createNewWebSocket END");
     }
 
     async function login(userName: string, password: string) {
-        console.log("login");
+        LOG_ON && console.log("login START");
         await api.login(userName, password);
         fetchUser();
+        LOG_ON && console.log("login END");
     }
 
     async function logout() {
-        console.log("logout");
-        webSocket && webSocket.close();
+        LOG_ON && console.log("logout START");
         await api.logout();
-        setInitialState();
+        fetchUser();
+        LOG_ON && console.log("logout END");
     }
 
 }

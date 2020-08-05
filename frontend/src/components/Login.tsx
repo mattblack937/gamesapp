@@ -12,11 +12,14 @@ export function Login () {
     const { login } = useContext(AppContext);
 
     return(
-        <div className={"login" + (filled() ? " active" : "")} onClick={()=> filled() && login!(userName, password)}>
-            <input autoFocus={true} onClick={(e)=> e.stopPropagation()} type='text' name='username' onChange={(e)=>setUserName(e.target.value)}/>
-            <input onClick={(e)=> e.stopPropagation()} type='password' name='password' onChange={(e)=> setPassword(e.target.value)}/>
-            <div>Login</div>
+        <div className={"login-wrapper"}>
+            <div className={"login" + (filled() ? " active" : "")} onClick={()=> filled() && login!(userName, password)}>
+                <input autoFocus={true} onClick={(e)=> e.stopPropagation()} type='text' name='username' onChange={(e)=>setUserName(e.target.value)}/>
+                <input onClick={(e)=> e.stopPropagation()} type='password' name='password' onChange={(e)=> setPassword(e.target.value)}/>
+                <div>Login</div>
+            </div>
         </div>
+
     );
 
     function filled(){

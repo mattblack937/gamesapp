@@ -69,14 +69,10 @@ public class GameApi {
 
     @PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE )
     public void login( @RequestBody UserNameAndPassword userNameAndPassword, HttpServletRequest request) {
-        UserDTO user = getUserDTOFromRequest(request);
+        UserDTO oldUser = getUserDTOFromRequest(request);
 
         request.getSession().invalidate();
         HttpSession session = request.getSession(true);
-
-        if (user != null){
-            ConnectionHandler.getWebSocketsByUserId(user.getId()).forEach(webSocket -> ConnectionHandler.removeWebSocket(webSocket));
-        }
 
         if (userNameAndPassword.getUserName()==null || userNameAndPassword.getPassword()==null){
             //FIXME ERROR HANDLING
@@ -84,6 +80,10 @@ public class GameApi {
         }
 
         session.setAttribute("user", userService.checkUserLogin(userNameAndPassword.getUserName(), userNameAndPassword.getPassword() ) ) ;
+
+        if (oldUser!=null && oldUser.getId()!=null){
+            ConnectionHandler.removeAndCloseWebSockets(oldUser.getId());
+        }
     }
 
 
@@ -130,8 +130,8 @@ public class GameApi {
         request.getSession().invalidate();
         request.getSession(true);
 
-        if (user != null){
-            ConnectionHandler.getWebSocketsByUserId(user.getId()).forEach(webSocket -> ConnectionHandler.removeWebSocket(webSocket));
+        if (user!=null && user.getId()!=null){
+            ConnectionHandler.removeAndCloseWebSockets(user.getId());
         }
     }
 

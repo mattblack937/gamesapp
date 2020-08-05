@@ -1,14 +1,12 @@
 package hu.gamesgeek.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hu.gamesgeek.WSServer;
+import hu.gamesgeek.GameWebSocketServer;
 import hu.gamesgeek.game.Group;
 import hu.gamesgeek.types.MessageType;
-import hu.gamesgeek.types.dto.GroupDTO;
 import hu.gamesgeek.types.dto.StateDTO;
 import hu.gamesgeek.types.dto.UserDTO;
 import hu.gamesgeek.websocket.WSMessage;
-import hu.gamesgeek.websocket.messagehandler.StateMessageHandler;
 import org.java_websocket.WebSocket;
 
 
@@ -55,7 +53,7 @@ public class GroupHandler {
         }
 
         for (WebSocket webSocket: ConnectionHandler.getWebSocketsByUserId(user.getId())){
-            WSServer.sendMessage(webSocket, wsMessage);
+            GameWebSocketServer.sendMessage(webSocket, wsMessage);
         }
     }
 
@@ -73,7 +71,7 @@ public class GroupHandler {
             e.printStackTrace();
         }
 
-        WSServer.sendMessage(toUserId, wsMessage);
+        GameWebSocketServer.sendMessage(toUserId, wsMessage);
     }
 
     public static void leaveGroup(UserDTO user) {

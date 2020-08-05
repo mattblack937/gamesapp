@@ -16,11 +16,11 @@ import java.util.List;
 @Configuration
 public class GameSpringApplication extends WebSecurityConfigurerAdapter {
 
-	private static WSServer wsServer;
+	private static GameWebSocketServer wsServer;
 
     public static void main(String[] args) {
         SpringApplication.run(GameSpringApplication.class, args);
-        wsServer = new WSServer(9000);
+        wsServer = new GameWebSocketServer(9000);
         wsServer.start();
         new UserTokenRemover().run();
     }

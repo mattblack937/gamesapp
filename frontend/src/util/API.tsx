@@ -1,5 +1,6 @@
 import { User } from "./types";
 import {GameType} from "./enums";
+import {LOG_ON} from "../App";
 
 const URL = "http://localhost:8080";
 
@@ -13,7 +14,7 @@ class API{
     }
 
     public async getUserToken(): Promise<string>{
-        console.log("getUserToken");
+        LOG_ON && console.log("getUserToken");
         let message = await fetch(URL + "/userToken", {
             method: 'GET',
             credentials: 'include'
@@ -29,7 +30,7 @@ class API{
             method: 'GET',
             credentials: 'include'
         }).then( res => res.json()).then( res =>{return res}).catch((error=>{return null}));
-        console.log("api.getUser" + res);
+        LOG_ON && console.log("api.getUser" + res);
         return res as User;
     }
 
@@ -37,8 +38,7 @@ class API{
         let res = await fetch(URL + '/logout', {
             method: 'GET',
             credentials: 'include'
-        })
-            .then( res => res.json())
+        }).then( res => res.json())
             .then( res =>{return res})
             .catch((error=>{return null}));
     }
@@ -64,13 +64,11 @@ class API{
     }
 
     public async inviteUser(userId: string) {
-        console.log("invite2:",userId);
-
+        LOG_ON && console.log("invite2:",userId);
         await fetch(URL + '/invite/' + userId, {
             method: 'GET',
             credentials: 'include'
-        })
-            .then( res => res.json())
+        }).then( res => res.json())
             .then( res =>{return res})
             .catch((error=>{return null}));
     }
@@ -79,8 +77,7 @@ class API{
         await fetch(URL + '/accept-invite/' + userId, {
             method: 'GET',
             credentials: 'include'
-        })
-            .then( res => res.json())
+        }).then( res => res.json())
             .then( res =>{return res})
             .catch((error=>{return null}));
     }

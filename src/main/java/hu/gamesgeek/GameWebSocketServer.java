@@ -18,11 +18,11 @@ import org.reflections.Reflections;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-public class WSServer extends WebSocketServer {
+public class GameWebSocketServer extends WebSocketServer {
 
     private static ObjectMapper mapper = new ObjectMapper();
 
-    public WSServer(int port) {
+    public GameWebSocketServer(int port) {
         super(new InetSocketAddress(port));
     }
 
@@ -34,16 +34,18 @@ public class WSServer extends WebSocketServer {
             if (userId == null){
                 if (wsMessage.getMessageType() == MessageType.USER_TOKEN){
                     boolean success = authenticate(mapper.readValue(wsMessage.getData(), UserTokenDTO.class), webSocket);
-                    if (success){
-                        StateMessageHandler.initializeAppState(webSocket);
-                        StateMessageHandler.updateUserLists();
-                    }
+//                    if (success){
+//                        StateMessageHandler.initializeAppState(webSocket);
+//                        StateMessageHandler.updateUserLists();
+//                    }
+                } else {
+                    webSocket.close();
                 }
             } else {
                 AbstractMessageHandler messageHandler = getMessageHandler(wsMessage.getMessageType());
                 messageHandler.handleMessage(userId, mapper.readValue(wsMessage.getData(), messageHandler.getClass().getAnnotation(MessageHandler.class).dtoClass()));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Could not process WSMessage: "+message+", WebSocket: "+webSocket);
         }
     }
@@ -82,14 +84,14 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onClose(WebSocket webSocket, int code, String reason, boolean remote) {
-        ConnectionHandler.removeWebSocket(webSocket);
-        StateMessageHandler.updateUserLists();
+        ConnectionHandler.removeAndCloseWebSocket(webSocket);
+//        StateMessageHandler.updateUserLists();
     }
 
     @Override
     public void onError(WebSocket webSocket, Exception ex) {
-        ConnectionHandler.removeWebSocket(webSocket);
-        StateMessageHandler.updateUserLists();
+        ConnectionHandler.removeAndCloseWebSocket(webSocket);
+//        StateMessageHandler.updateUserLists();
     }
 
     public static void broadcastMessage(WSMessage message){

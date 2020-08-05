@@ -44,15 +44,21 @@ public abstract class ConnectionHandler {
         userTokens.remove(userToken);
     }
 
-    public static void removeWebSocket(WebSocket webSocket) {
+    public static void removeAndCloseWebSockets(String userId) {
+        List<WebSocket> webSockets = userConnections.get(userId);
+        userConnections.remove(userId);
+        webSockets.forEach(webSocket -> webSocket.close());
+    }
+
+    public static void removeAndCloseWebSocket(WebSocket webSocket) {
         String userId = getUserIdByWebSocket(webSocket);
         if (userId != null) {
             removeWebSocket(userId, webSocket);
         }
+        webSocket.close();
     }
 
     private static void removeWebSocket(String userId, WebSocket webSocket) {
-        webSocket.close();
         List<WebSocket> webSockets = new ArrayList<>();
         webSockets.addAll(userConnections.get(userId));
         webSockets.remove(webSocket);
@@ -83,14 +89,14 @@ public abstract class ConnectionHandler {
         userTokens.add(userToken);
     }
 
-    public static void onLogout(String userId) {
-        List<WebSocket> webSockets = getWebSocketsByUserId(userId);
-        if (webSockets != null){
-            for (WebSocket webSocket: webSockets){
-                webSocket.close();
-            }
-        }
-        userConnections.remove(userId);
-        StateMessageHandler.updateUserLists();
-    }
+//    public static void onLogout(String userId) {
+//        List<WebSocket> webSockets = getWebSocketsByUserId(userId);
+//        if (webSockets != null){
+//            for (WebSocket webSocket: webSockets){
+//                webSocket.close();
+//            }
+//        }
+//        userConnections.remove(userId);
+//        StateMessageHandler.updateUserLists();
+//    }
 }

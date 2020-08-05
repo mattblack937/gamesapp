@@ -2,7 +2,7 @@ package hu.gamesgeek.websocket.messagehandler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hu.gamesgeek.WSServer;
+import hu.gamesgeek.GameWebSocketServer;
 import hu.gamesgeek.game.Game;
 import hu.gamesgeek.game.Group;
 import hu.gamesgeek.model.user.UserService;
@@ -43,7 +43,7 @@ public class StateMessageHandler extends AbstractMessageHandler<StateDTO> {
         }
 
         wsMessage.setData(mapper.writeValueAsString(stateDTO));
-        WSServer.sendMessage(webSocket, wsMessage);
+        GameWebSocketServer.sendMessage(webSocket, wsMessage);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class StateMessageHandler extends AbstractMessageHandler<StateDTO> {
         }
         wsMessage.setData(data);
         wsMessage.setMessageType(MessageType.STATE);
-        WSServer.broadcastMessage(wsMessage);
+        GameWebSocketServer.broadcastMessage(wsMessage);
     }
 
 }

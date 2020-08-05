@@ -2,23 +2,18 @@ package hu.gamesgeek.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hu.gamesgeek.WSServer;
+import hu.gamesgeek.GameWebSocketServer;
 import hu.gamesgeek.game.Game;
 import hu.gamesgeek.game.GameAnnotation;
 import hu.gamesgeek.game.GameState;
 import hu.gamesgeek.game.Group;
-import hu.gamesgeek.game.amoba.AmobaDTO;
 import hu.gamesgeek.game.amoba.AmobaSettingsDTO;
-import hu.gamesgeek.model.user.UserService;
 import hu.gamesgeek.types.GameType;
 import hu.gamesgeek.types.MessageType;
 import hu.gamesgeek.types.dto.GameDTO;
 import hu.gamesgeek.types.dto.StateDTO;
 import hu.gamesgeek.types.dto.UserDTO;
 import hu.gamesgeek.websocket.WSMessage;
-import hu.gamesgeek.websocket.messagehandler.AbstractMessageHandler;
-import hu.gamesgeek.websocket.messagehandler.MessageHandler;
-import hu.gamesgeek.websocket.messagehandler.StateMessageHandler;
 import org.java_websocket.WebSocket;
 import org.reflections.Reflections;
 
@@ -60,7 +55,7 @@ public class GameHandler {
 
         for (UserDTO user: group.getUsers()){
             for (WebSocket webSocket: ConnectionHandler.getWebSocketsByUserId(user.getId())){
-                WSServer.sendMessage(webSocket, wsMessage);
+                GameWebSocketServer.sendMessage(webSocket, wsMessage);
             }
         }
     }
@@ -105,7 +100,7 @@ public class GameHandler {
 
         for (UserDTO user: game.getUsers()){
             for(WebSocket webSocket: ConnectionHandler.getWebSocketsByUserId(user.getId())){
-                WSServer.sendMessage(webSocket, wsMessage);
+                GameWebSocketServer.sendMessage(webSocket, wsMessage);
             }
         }
 
