@@ -1,4 +1,4 @@
-import React, {ReactNode, useContext, useState} from 'react';
+import React, {ReactNode, useContext, useEffect, useState} from 'react';
 import {UserList} from "./UserList";
 import {Chat} from "./Chat";
 import {ChatMessage, Group, User} from "../util/types";
@@ -12,6 +12,10 @@ import {AppContext} from "../App";
 import '../css/header.css';
 
 import { ReactComponent as LogoutLogo } from '../svg/logout.svg';
+import { ReactComponent as ReconnectLogo } from '../svg/reconnect.svg';
+
+
+import {Key} from "ts-keycode-enum";
 
 
 type HeaderProps = {
@@ -31,20 +35,37 @@ type MenuButtonProps = {
 export function Header ( {} : HeaderProps) {
 
 
-    const { user } = useContext(AppContext);
+    const { user, reconnect } = useContext(AppContext);
+
+
 
     return (
         <div className={"header"}>
-            <span>Welcome, {user!.name}</span>
 
-            <HeaderButton id={"game"} text={"GAME"}/>
+            <div className={"header-buttons"}>
+                <HeaderButton id={"game"} text={"GAME"}/>
+                <HeaderButton id={"s"} text={"CHAT"}/>
+                <HeaderButton id={"s"} text={"PROFILE"}/>
+                <HeaderButton id={"s"} text={"PROFILE"}/>
+
+
+            </div>
+
+            <div className={"header-left"}>
+                <div className={"welcome"}>Welcome, {user!.name}</div>
+                <div className={"reconnect"} onClick={()=> reconnect!()}>
+                    <ReconnectLogo />
+                </div>
+            </div>
+
+
             <Logout/>
         </div>
     );
 
     function HeaderButton( {id, text}: MenuButtonProps) {
         return (
-            <div >
+            <div className={"header-button"}>
                 {text}
             </div>
         );
@@ -61,9 +82,22 @@ export function Header ( {} : HeaderProps) {
     function Logout () {
         const { logout } = useContext(AppContext);
 
+        const listener = (event: KeyboardEvent) => {
+            if (event.keyCode === Key.Escape) {
+                logout!();
+            }
+        };
+
+        useEffect(() => {
+            window.addEventListener('keyup', listener);
+            return () => {
+                window.removeEventListener('keyup', listener);
+            };
+        }, []);
+
         return (
             <div className={"logout"} onClick={() => logout!()}>
-                <LogoutLogo  />
+                <LogoutLogo />
             </div>
         );
     }

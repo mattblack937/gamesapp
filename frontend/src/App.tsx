@@ -11,6 +11,7 @@ import {MainComponent} from "./components/MainComponent";
 import {async} from "q";
 import {func} from "prop-types";
 import {Header} from "./components/Header";
+import {Key} from "ts-keycode-enum";
 
 export const AppContext = React.createContext<Partial<ContextProps>>({});
 
@@ -19,8 +20,9 @@ export const LOG_ON = true;
 
 export type ContextProps = {
     login: (userName: string, password: string)=>{}
-    logout: ()=>{}
-    user: User | null
+    logout: ()=> {}
+    user: User | null,
+    reconnect: () => void
 };
 
 export function App () {
@@ -49,19 +51,24 @@ export function App () {
             value={{
                 login,
                 logout,
-                user
+                user,
+                reconnect
             }}>
+
+
             <div className="app">
                 <Switch>
+
                     { !user &&
                     <Route>
+
                         <Login/>
                     </Route>
                     }
 
                     <Route exact={true} path={"/"} >
                         <Header />
-                        <MainComponent />
+                        {/*<MainComponent />*/}
                     </Route>
 
                     <Redirect to="" />
@@ -75,6 +82,10 @@ export function App () {
         let user = await api.getUser();
         setUser(user);
         LOG_ON && console.log("fetchUser END");
+    }
+
+    function reconnect() {
+        setUser(undefined);
     }
 
     function sendMessage(data: any, messageType: MessageType){
