@@ -1,6 +1,7 @@
 .header{
     background: rgb(100, 100, 100);
     height: 100px;
+    position: relative;
 }
 
 .header-left{

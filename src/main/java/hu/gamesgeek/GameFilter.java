@@ -21,6 +21,7 @@ public class GameFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         String URI = ((HttpServletRequestWrapper) request).getRequestURI();
+//        request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
         UserDTO user = (UserDTO) ((HttpServletRequestWrapper) request).getSession().getAttribute("user");
 
         if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {

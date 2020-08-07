@@ -14,7 +14,7 @@ export function GroupChat ( {messages} : GroupChatProps) {
 
     return (
         <div className={"group-chat"}>
-            <Chat sendChatMessage={async (message)=> await api.sendGroupMessage(message)} chatMessages={messages}/>
+
         </div>
     );
 

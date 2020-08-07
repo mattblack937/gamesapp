@@ -10,6 +10,10 @@ body {
   overflow: hidden;
 }
 
+input{
+  padding: 10px;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

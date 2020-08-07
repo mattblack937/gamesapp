@@ -106,6 +106,23 @@ class API{
             .catch((error=>{return null}));
     }
 
+    public async sendChatMessage(text: string) {
+        console.log("api.sendChatMessage:",text);
+
+        const res = await fetch(URL + '/chat-message', {
+            mode: 'cors',
+            credentials: 'include',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: text
+        }).then( res =>{return res.ok });
+
+        return res;
+    }
+
     public async post1() {
         console.log("post1");
 

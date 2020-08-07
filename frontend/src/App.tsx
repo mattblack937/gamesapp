@@ -12,6 +12,7 @@ import {async} from "q";
 import {func} from "prop-types";
 import {Header} from "./components/Header";
 import {Key} from "ts-keycode-enum";
+import {Chat} from "./components/Chat";
 
 export const AppContext = React.createContext<Partial<ContextProps>>({});
 
@@ -22,13 +23,20 @@ export type ContextProps = {
     login: (userName: string, password: string)=>{}
     logout: ()=> {}
     user: User | null,
-    reconnect: () => void
+    reconnect: () => void,
+    chatMessages: ChatMessage[]
 };
 
 export function App () {
     const [user, setUser] = useState<User | null | undefined>(undefined);
     const [webSocket, setWebsocket] = useState<WebSocket | null>(null);
-    const authenticated = !! user;
+
+    const [chatMessages, _setChatMessages] = useState<ChatMessage[]>([]);
+    const chatMessagesRef = React.useRef(chatMessages);
+    const setChatMessages = (chatMessages: ChatMessage[]) => {
+        chatMessagesRef.current = chatMessages;
+        _setChatMessages(chatMessages);
+    };
 
     useEffect(() => {
         LOG_ON && console.log("HERE WE GO!");
@@ -45,14 +53,14 @@ export function App () {
         LOG_ON && console.log("useEffect END");
     }, [user]);
 
-
     return (
         <AppContext.Provider
             value={{
                 login,
                 logout,
                 user,
-                reconnect
+                reconnect,
+                chatMessages
             }}>
 
 
@@ -68,7 +76,7 @@ export function App () {
 
                     <Route exact={true} path={"/"} >
                         <Header />
-                        {/*<MainComponent />*/}
+                        <Chat />
                     </Route>
 
                     <Redirect to="" />
@@ -99,9 +107,13 @@ export function App () {
 
     function setInitialState() {
         LOG_ON && console.log("setInitialState START");
+
         setUser(undefined);
         webSocket && webSocket.close();
         setWebsocket(null);
+
+        setChatMessages([]);
+
         LOG_ON && console.log("setInitialState END");
     }
 
@@ -128,7 +140,7 @@ export function App () {
                             // app.updateState(JSON.parse(message.data) as AppState);
                             break;
                         case MessageType.CHAT_MESSAGE.valueOf():
-                            // app.addChatMessage(JSON.parse(message.data) as ChatMessage);
+                            setChatMessages(chatMessagesRef.current.concat(JSON.parse(message.data) as ChatMessage));
                             break;
                         case MessageType.INVITE.valueOf():
                             // app.addInvite(JSON.parse(message.data) as User);

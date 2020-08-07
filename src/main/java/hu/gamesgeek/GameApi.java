@@ -7,13 +7,16 @@ import hu.gamesgeek.game.Group;
 import hu.gamesgeek.game.amoba.AmobaMoveDTO;
 import hu.gamesgeek.types.GameType;
 import hu.gamesgeek.model.user.UserService;
+import hu.gamesgeek.types.dto.ChatMessageDTO;
 import hu.gamesgeek.util.*;
 import hu.gamesgeek.types.MessageType;
 import hu.gamesgeek.websocket.WSMessage;
 import hu.gamesgeek.types.dto.UserDTO;
 import hu.gamesgeek.types.dto.UserTokenDTO;
+import hu.gamesgeek.websocket.messagehandler.ChatMessageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -110,6 +113,29 @@ public class GameApi {
         if (game.legal(user, move)){
             game.move(user, move);
             GameHandler.updateUsers(game);
+        }
+    }
+
+    @PostMapping(path = "/chat-message", consumes = MediaType.APPLICATION_JSON_VALUE  )
+    public void chatMessage( @RequestBody String text, HttpServletRequest request) {
+        UserDTO user = getUserDTOFromRequest(request);
+
+        if(!StringUtils.isEmpty(text)){
+            ChatMessageDTO chatMessageDTO = new ChatMessageDTO();
+            chatMessageDTO.setMessage(text);
+            chatMessageDTO.setUser(user);
+
+            WSMessage wsMessage = new WSMessage();
+            String data = null;
+            try {
+                data = mapper.writeValueAsString(chatMessageDTO);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            wsMessage.setData(data);
+            wsMessage.setMessageType(MessageType.CHAT_MESSAGE);
+
+            GameWebSocketServer.broadcastMessage(wsMessage);
         }
     }
 

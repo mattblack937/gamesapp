@@ -1,24 +1,24 @@
 /*.App {*/
-  /*text-align: center;*/
+/*text-align: center;*/
 /*}*/
 
 /*.App-logo {*/
-  /*height: 40vmin;*/
+/*height: 40vmin;*/
 /*}*/
 
 /*.App-header {*/
-  /*background-color: #282c34;*/
-  /*min-height: 100vh;*/
-  /*display: flex;*/
-  /*flex-direction: column;*/
-  /*align-items: center;*/
-  /*justify-content: center;*/
-  /*font-size: calc(10px + 2vmin);*/
-  /*color: white;*/
+/*background-color: #282c34;*/
+/*min-height: 100vh;*/
+/*display: flex;*/
+/*flex-direction: column;*/
+/*align-items: center;*/
+/*justify-content: center;*/
+/*font-size: calc(10px + 2vmin);*/
+/*color: white;*/
 /*}*/
 
 /*.App-link {*/
-  /*color: #09d3ac;*/
+/*color: #09d3ac;*/
 /*}*/
 
 .app{
@@ -27,29 +27,29 @@
 }
 
 .user-list{
-  background: red;
-  width: 500px;
-  margin: 20px;
+    background: red;
+    width: 500px;
+    margin: 20px;
 }
 
 .user-list{
-  padding-bottom: 0.5px;
+    padding-bottom: 0.5px;
 }
 
 .user{
-  margin: 2px;
-  background: black;
+    margin: 2px;
+    background: black;
 }
 
 .user:hover{
-  cursor: pointer;
-  background: lightpink;
+    cursor: pointer;
+    background: lightpink;
 }
 
 .user-list div:first-child{
-  font-weight: bold;
-  color: white;
-  background: red;
+    font-weight: bold;
+    color: white;
+    background: red;
 }
 
 /*LOGIN*/
@@ -96,65 +96,110 @@
 
 /*CHAT*/
 .chat{
-  background: gray;
-  width: 500px;
-  margin: 20px;
+    /*background: red;*/
+    width: 800px;
+    margin: 0 auto;
+    /*overflow: hidden;*/
+
+}
+
+.chat .messages{
+    /*     display: revert; */
+    height: 40vh;
+    height: calc(100vh - 300px);
+    /*! margin: -20px; */
+    /*! margin: 0; */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.chat .message-box{
+    color: white;
+}
+
+.message-box.mine{
+    margin-right: 0;
+    margin-left: auto;
+    text-align: right;
+    border-radius: 10px 0 10px 10px;
+}
+
+.message-box{
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 500px;
+    border-radius: 0 10px 10px 10px;
+
+}
+
+.chat .message-user{
+    font-weight: bold;
+}
+
+.chat .user-input{
+    /*background: green;*/
+    height: 160px;
+    padding-top: 40px;
 }
 
 .chat input{
-  width: 300px;
-  font-size: 30px;
+    display: block;
+    margin: auto;
+    font-size: 2rem;
 }
 /*CHAT*/
 
 /*MENU*/
-  .menu-container{
+.menu-container{
     display: flex
-  }
+}
 
 .menu-element{
-  margin: 10px;
-  padding: 10px;
-  background: gray;
-  color: black;
+    margin: 10px;
+    padding: 10px;
+    background: gray;
+    color: black;
 }
 
 .menu-element.active{
-  background: white;
+    background: white;
 }
 /*MENU*/
 
 /*GROUP*/
 .group{
-  border: 2px solid yellow;
+    border: 2px solid yellow;
 }
 /*GROUP*/
 
 .users{
-  border: 2px solid green;
+    border: 2px solid green;
 }
 
 .invites{
-  border: 2px solid white;
+    border: 2px solid white;
 }
 
 .game-component{
-  border: 2px solid coral;
+    border: 2px solid coral;
 }
 
 
 .amoba div{
-  display: flex;
+    display: flex;
 }
 
 .amoba .square{
-  border: 3px solid cyan;
-  height: 100px;
-  width: 100px;
+    border: 3px solid cyan;
+    height: 100px;
+    width: 100px;
 }
 
 .amoba .square{
-  padding: 10px;
+    padding: 10px;
 }
 
 
@@ -163,13 +208,13 @@
 }
 
 .square.empty:hover{
-  background: rgba(255,255,255, 0.5);
-  cursor: pointer;
+    background: rgba(255,255,255, 0.5);
+    cursor: pointer;
 }
 
 .amoba .row{
-  display: flex;
-  z-index: 100;
+    display: flex;
+    z-index: 100;
 }
 
 
@@ -219,6 +264,7 @@
 
 .amoba{
     stroke: yellow;
+    -webkit-user-select: none;
     user-select: none;
 }
 
