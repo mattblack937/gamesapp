@@ -73,39 +73,37 @@ export function Login () {
         };
     }, []);
 
-
-
     return(
         <div className={"login-wrapper"}>
             <div className={"login-z"}>
                 <div className={"login" + (isFilled() ? " active" : "")} onClick={()=> isFilled() && submit()}>
                     {mode === Mode.LOGIN ?
-                        <div id={"1"}>
+                        <>
                             <div className={"input-with-default-value user-name"}>
-                                <input value={userName} required={true} autoFocus={true} onClick={(e)=> e.stopPropagation()} type='text' onChange={(e)=>setUserName(e.target.value)}/>
+                                <input key={1} value={userName} required={true} autoFocus={true} onClick={(e)=> e.stopPropagation()} type='text' onChange={(e)=>setUserName(e.target.value)}/>
                                 <div></div>
                             </div>
                             <div className={"input-with-default-value password"}>
-                                <input value={password} required={true} onClick={(e)=> e.stopPropagation()} type='password' onChange={(e)=> setPassword(e.target.value)}/>
+                                <input key={2} value={password} required={true} onClick={(e)=> e.stopPropagation()} type='password' onChange={(e)=> setPassword(e.target.value)}/>
                                 <div></div>
                             </div>
                             <div>Login</div>
-                        </div> :
-                        <div id={"2"}>
+                        </> :
+                        <>
                             <div className={"input-with-default-value user-name"}>
-                                <input value={userNameNew} required={true} autoFocus={true} onClick={(e)=> e.stopPropagation()} type='text' onChange={(e)=>setUserNameNew(e.target.value)}/>
+                                <input key={3} autoComplete={"new-password"} value={userNameNew} required={true} autoFocus={true} onClick={(e)=> e.stopPropagation()} type='text' onChange={(e)=>setUserNameNew(e.target.value)}/>
                                 <div></div>
                             </div>
                             <div className={"input-with-default-value password"}>
-                                <input value={passwordNew} required={true} onClick={(e)=> e.stopPropagation()} type='password' onChange={(e)=> setPasswordNew(e.target.value)}/>
+                                <input key={4} value={passwordNew} required={true} onClick={(e)=> e.stopPropagation()} type='password' onChange={(e)=> setPasswordNew(e.target.value)}/>
                                 <div></div>
                             </div>
                             <div className={"input-with-default-value password-again"}>
-                                <input value={passwordAgain} required={true} onClick={(e)=> e.stopPropagation()} type='password' onChange={(e)=> setPasswordAgain(e.target.value)}/>
+                                <input key={5} value={passwordAgain} required={true} onClick={(e)=> e.stopPropagation()} type='password' onChange={(e)=> setPasswordAgain(e.target.value)}/>
                                 <div></div>
                             </div>
                             <div>Create Account</div>
-                        </div>
+                        </>
                     }
                 </div>
 
@@ -136,7 +134,7 @@ export function Login () {
     }
 
     function submit() {
-        if (mode === Mode.LOGIN){
+        if (modeRef.current === Mode.LOGIN){
             login!(userNameRef.current, passwordRef.current)
         } else {
             if (passwordNewRef.current === passwordAgainRef.current){
