@@ -3,35 +3,18 @@ package hu.gamesgeek.model.user;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "USERS")
+public class User extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "username")
+    @Column(name = "USERNAME")
     private String userName;
+
+    @Column(name = "PASSWORD")
     private String password;
-    private byte enabled;
+
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public User() {
-    }
-
-    public User(String userName, String password, UserRole role) {
-        this.userName = userName;
-        this.password = password;
-        this.role = role;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getUserName() {
         return userName;
@@ -57,11 +40,4 @@ public class User {
         this.role = role;
     }
 
-    public byte getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(byte enabled) {
-        this.enabled = enabled;
-    }
 }

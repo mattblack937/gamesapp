@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hu.gamesgeek.GameWebSocketServer;
 import hu.gamesgeek.game.Game;
 import hu.gamesgeek.game.Group;
-import hu.gamesgeek.model.user.UserService;
+import hu.gamesgeek.model.user.BusinessManager;
 import hu.gamesgeek.util.ConnectionHandler;
 import hu.gamesgeek.util.GameHandler;
 import hu.gamesgeek.util.GroupHandler;
@@ -26,7 +26,7 @@ public class StateMessageHandler extends AbstractMessageHandler<StateDTO> {
     private static ObjectMapper mapper = new ObjectMapper();
 
     public static void initializeAppState(WebSocket webSocket) throws JsonProcessingException {
-        UserDTO user = ServiceHelper.getService(UserService.class).findUserDTOByUserId(ConnectionHandler.getUserIdByWebSocket(webSocket));
+        UserDTO user = ServiceHelper.getService(BusinessManager.class).findUserDTOByUserId(ConnectionHandler.getUserIdByWebSocket(webSocket));
 
         WSMessage wsMessage = new WSMessage();
         wsMessage.setMessageType(MessageType.STATE);
@@ -62,11 +62,11 @@ public class StateMessageHandler extends AbstractMessageHandler<StateDTO> {
     }
 
     public static void updateUserLists(){
-        UserService userService = ServiceHelper.getService(UserService.class);
+        BusinessManager businessManager = ServiceHelper.getService(BusinessManager.class);
         Set<String> userIds = ConnectionHandler.getAllUserIds();
         List<UserDTO> users = new ArrayList<>();
         for(String userId: userIds){
-            UserDTO userDTO = userService.findUserDTOByUserId(userId);
+            UserDTO userDTO = businessManager.findUserDTOByUserId(userId);
             users.add(userDTO);
         }
         StateDTO stateDTO = new StateDTO();

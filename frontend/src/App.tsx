@@ -69,7 +69,6 @@ export function App () {
 
                     { !user &&
                     <Route>
-
                         <Login/>
                     </Route>
                     }

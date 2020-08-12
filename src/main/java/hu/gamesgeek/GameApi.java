@@ -6,14 +6,13 @@ import hu.gamesgeek.game.Game;
 import hu.gamesgeek.game.Group;
 import hu.gamesgeek.game.amoba.AmobaMoveDTO;
 import hu.gamesgeek.types.GameType;
-import hu.gamesgeek.model.user.UserService;
+import hu.gamesgeek.model.user.BusinessManager;
 import hu.gamesgeek.types.dto.ChatMessageDTO;
 import hu.gamesgeek.util.*;
 import hu.gamesgeek.types.MessageType;
 import hu.gamesgeek.websocket.WSMessage;
 import hu.gamesgeek.types.dto.UserDTO;
 import hu.gamesgeek.types.dto.UserTokenDTO;
-import hu.gamesgeek.websocket.messagehandler.ChatMessageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
@@ -30,7 +29,7 @@ import java.util.UUID;
 public class GameApi {
 
     @Autowired
-    UserService userService;
+    BusinessManager businessManager;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -82,7 +81,7 @@ public class GameApi {
             return;
         }
 
-        session.setAttribute("user", userService.checkUserLogin(userNameAndPassword.getUserName(), userNameAndPassword.getPassword() ) ) ;
+        session.setAttribute("user", businessManager.checkUserLogin(userNameAndPassword.getUserName(), userNameAndPassword.getPassword() ) ) ;
 
         if (oldUser!=null && oldUser.getId()!=null){
             ConnectionHandler.removeAndCloseWebSockets(oldUser.getId());
@@ -240,7 +239,7 @@ public class GameApi {
     public void acceptInvite(@PathVariable String ownerId, HttpServletRequest request) {
 
         UserDTO user = getUserDTOFromRequest(request);
-        UserDTO owner = ServiceHelper.getService(UserService.class).findUserDTOByUserId(ownerId);
+        UserDTO owner = ServiceHelper.getService(BusinessManager.class).findUserDTOByUserId(ownerId);
 
         Group groupOfUser = GroupHandler.getGroupOfUser(user);
         Group groupOfOwner = GroupHandler.getGroupOfUser(owner);
