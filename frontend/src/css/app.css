@@ -69,6 +69,10 @@
     display: grid;
 }
 
+.login-z{
+    position: relative;
+}
+
 .login.active{
     background: lightgray;
     cursor: pointer;
@@ -271,4 +275,57 @@
 .amoba_o{
     fill: none;
     stroke: yellow;
+}
+
+
+.sign{
+    position: absolute;
+    right: 40px;
+    top: -40px;
+    background: lightgray;
+    border-radius: 4px 4px 0 0;
+    z-index: 1;
+    transition: .3s ease;
+    height: 80px;
+}
+
+.sign:hover{
+    cursor: pointer;
+    transform: scale(1.2);
+    top: -43px;
+}
+
+.login{
+    position: relative;
+    z-index: 2;
+}
+
+
+
+.input-with-default-value input:not(:valid):not(:focus) + div:after{
+    position: absolute;
+    top: 15px;
+    left: 8px;
+    color: gray;
+    font-size: 30px;
+    opacity: .5;
+    font-weight: normal;
+    pointer-events: none;
+}
+
+.input-with-default-value{
+    position: relative;
+}
+
+
+.user-name input:not(:valid):not(:focus) + div:after{
+    content: "UserName";
+}
+
+.password input:not(:valid):not(:focus) + div:after{
+    content: "Password";
+}
+
+.password-again input:not(:valid):not(:focus) + div:after{
+    content: "Password again";
 }
