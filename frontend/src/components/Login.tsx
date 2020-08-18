@@ -4,9 +4,10 @@ import {api} from "../util/API";
 import {func} from "prop-types";
 import { Key } from 'ts-keycode-enum';
 
-import {App, AppContext} from "../App";
+import {App, AppContext, LOG_ON} from "../App";
 import { ReactComponent as PlusSign } from '../svg/plus.svg';
 import { ReactComponent as BackSign } from '../svg/back.svg';
+import {async} from "q";
 
 enum Mode {
     LOGIN, REGISTRATION
@@ -57,8 +58,10 @@ export function Login () {
     };
 
 
+    const [error, setError] = useState<string>("");
 
-    const { login, createNewAccount } = useContext(AppContext);
+
+    const { login, reconnect } = useContext(AppContext);
 
     const listener = (event: KeyboardEvent) => {
         if (event.keyCode === Key.Enter && isFilled()) {
@@ -75,6 +78,7 @@ export function Login () {
 
     return(
         <div className={"login-wrapper"}>
+            {error}
             <div className={"login-z"}>
                 <div className={"login" + (isFilled() ? " active" : "")} onClick={()=> isFilled() && submit()}>
                     {mode === Mode.LOGIN ?
@@ -133,12 +137,25 @@ export function Login () {
         }
     }
 
-    function submit() {
+    async function submit() {
         if (modeRef.current === Mode.LOGIN){
             login!(userNameRef.current, passwordRef.current)
         } else {
             if (passwordNewRef.current === passwordAgainRef.current){
-                createNewAccount!(userNameNewRef.current, passwordNewRef.current);
+                try{
+                    const error = await api.createNewAccount!(userNameNewRef.current, passwordNewRef.current);
+                    console.log("error2: ", error);
+                    error && setError(error.message);
+
+
+                    // reconnect!();
+                } catch (e) {
+                    if(e.statusCode === 409){
+                        console.log("e:", e);
+                        console.log("409 madafaka");
+                    }
+                }
+
             } else {
                 // TODO error
             }

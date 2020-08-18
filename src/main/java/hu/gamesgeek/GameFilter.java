@@ -37,6 +37,7 @@ public class GameFilter implements Filter {
             case "/user":
             case "/login":
             case "/logout":
+            case "/create-account":
                 chain.doFilter(request, response);
                 return;
             default:

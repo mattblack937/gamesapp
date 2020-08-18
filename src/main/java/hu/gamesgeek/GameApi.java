@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hu.gamesgeek.game.Game;
 import hu.gamesgeek.game.Group;
 import hu.gamesgeek.game.amoba.AmobaMoveDTO;
+import hu.gamesgeek.model.user.User;
 import hu.gamesgeek.types.GameType;
 import hu.gamesgeek.model.user.BusinessManager;
 import hu.gamesgeek.types.dto.ChatMessageDTO;
@@ -19,6 +20,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.Serializable;
@@ -88,7 +90,21 @@ public class GameApi {
         }
     }
 
+    @PostMapping(path = "/create-account", consumes = MediaType.APPLICATION_JSON_VALUE )
+    public void createAccount( @RequestBody UserNameAndPassword userNameAndPassword, HttpServletResponse response) {
+        User user = businessManager.findUserByUserName(userNameAndPassword.getPassword());
 
+        if (user != null){
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            return;
+        } else {
+            user = new User();
+            user.setUserName(userNameAndPassword.getUserName());
+            user.setPassword(userNameAndPassword.getPassword());
+            businessManager.save(user);
+        }
+
+    }
 
     @PostMapping(path = "/move", consumes = MediaType.APPLICATION_JSON_VALUE  )
     public void move( @RequestBody String  moveJSON, HttpServletRequest request) {

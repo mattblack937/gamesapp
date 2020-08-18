@@ -3,6 +3,7 @@ package hu.gamesgeek.model.user;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
@@ -47,7 +48,11 @@ public class CrudManager {
         for (int i = 0; i < params.length; i++) {
             query.setParameter(i+1, params[i]);
         }
-        return (E) query.getSingleResult();
+        try {
+            return (E) query.getSingleResult();
+        } catch (NoResultException noResultException){
+            return null;
+        }
     }
 
 }

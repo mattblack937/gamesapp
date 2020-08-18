@@ -63,6 +63,37 @@ class API{
         return res;
     }
 
+    public async createNewAccount(userName: string, password: string) :Promise<Error | undefined> {
+
+        const res = await fetch(URL + '/create-account', {
+            mode: 'cors',
+            credentials: 'include',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                    userName: userName,
+                    password: password
+                }
+            )
+        }).then(function(response) {
+            if (response.ok) {
+                return;
+            }
+            console.log("response.status:", response.status);
+            console.log("response.statusText:", response.statusText);
+            return Error("UserName already taken");
+
+        }).then(function(response) {
+            console.log("response", response);
+            return response;
+        })
+
+        return res;
+    }
+
     public async inviteUser(userId: string) {
         LOG_ON && console.log("invite2:",userId);
         await fetch(URL + '/invite/' + userId, {

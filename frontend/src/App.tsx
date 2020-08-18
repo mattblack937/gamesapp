@@ -21,7 +21,6 @@ export const LOG_ON = true;
 
 export type ContextProps = {
     login: (userName: string, password: string)=>{},
-    createNewAccount: (userName: string, password: string)=>{},
     logout: ()=>{},
     user: User | null,
     reconnect: () => void,
@@ -58,7 +57,6 @@ export function App () {
         <AppContext.Provider
             value={{
                 login,
-                createNewAccount,
                 logout,
                 user,
                 reconnect,
@@ -195,10 +193,6 @@ export function App () {
         await api.login(userName, password);
         fetchUser();
         LOG_ON && console.log("login END");
-    }
-
-    async function createNewAccount(userName: string, password: string) {
-        LOG_ON && console.log("createNewAccount:", userName, password);
     }
 
     async function logout() {

@@ -36,4 +36,7 @@ public class BusinessManager {
                 " WHERE user.id = ?1", User.class, userId);
     }
 
+    public <E extends BaseEntity> E save(E entity) {
+        return crudManager.save(entity);
+    }
 }
