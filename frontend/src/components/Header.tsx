@@ -1,43 +1,22 @@
-import React, {ReactNode, useContext, useEffect, useState} from 'react';
-import {UserList} from "./UserList";
-import {Chat} from "./Chat";
-import {ChatMessage, Group, User} from "../util/types";
+import React, {useContext, useEffect} from 'react';
 import {api} from "../util/API";
-import {UsersComponent} from "./UsersComponent";
 
-import {Redirect, Route, Switch} from "react-router";
-import {Login} from "./Login";
-import {MainComponent} from "./MainComponent";
 import {AppContext} from "../App";
 import '../css/header.css';
 
 import { ReactComponent as LogoutLogo } from '../svg/logout.svg';
 import { ReactComponent as ReconnectLogo } from '../svg/reconnect.svg';
 
-
 import {Key} from "ts-keycode-enum";
-
-
-type HeaderProps = {
-
-}
-
-type TabProps = {
-    content: ReactNode
-    id: string
-}
 
 type MenuButtonProps = {
     text: string
     id: string
 }
 
-export function Header ( {} : HeaderProps) {
-
+export function Header () {
 
     const { user, reconnect } = useContext(AppContext);
-
-
 
     return (
         <div className={"header"}>
@@ -48,7 +27,6 @@ export function Header ( {} : HeaderProps) {
                 <HeaderButton id={"s"} text={"PROFILE"}/>
                 <HeaderButton id={"s"} text={"PROFILE"}/>
 
-
             </div>
 
             <div className={"header-left"}>
@@ -57,7 +35,6 @@ export function Header ( {} : HeaderProps) {
                     <ReconnectLogo />
                 </div>
             </div>
-
 
             <Logout/>
         </div>
@@ -71,16 +48,7 @@ export function Header ( {} : HeaderProps) {
         );
     }
 
-    function UserName( {userName}: {userName:string}) {
-        return (
-            <span>
-                {userName}
-            </span>
-        );
-    }
-
     function Logout () {
-        const { logout } = useContext(AppContext);
 
         const listener = (event: KeyboardEvent) => {
             if (event.keyCode === Key.Escape) {
@@ -100,9 +68,13 @@ export function Header ( {} : HeaderProps) {
                 <LogoutLogo />
             </div>
         );
+
+        async function logout() {
+            await api.logout();
+            reconnect!();
+        }
+
     }
-
-
 
 }
 

@@ -2,16 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {Redirect, Route, Switch} from "react-router-dom";
 import './css/app.css';
 
-import {ChatMessage, Game, Group, LobbyType, User, WSMessage} from "./util/types";
+import {ChatMessage, User, WSMessage} from "./util/types";
 import {Login} from "./components/Login";
 import {MessageType} from "./util/enums";
 import {api} from "./util/API";
 
-import {MainComponent} from "./components/MainComponent";
-import {async} from "q";
-import {func} from "prop-types";
 import {Header} from "./components/Header";
-import {Key} from "ts-keycode-enum";
 import {Chat} from "./components/Chat";
 
 export const AppContext = React.createContext<Partial<ContextProps>>({});
@@ -20,8 +16,6 @@ export const LOG_ON = true;
 
 
 export type ContextProps = {
-    login: (userName: string, password: string)=>{},
-    logout: ()=>{},
     user: User | null,
     reconnect: () => void,
     chatMessages: ChatMessage[]
@@ -53,11 +47,13 @@ export function App () {
         LOG_ON && console.log("useEffect END");
     }, [user]);
 
+    if(user === undefined){
+        return null;
+    }
+
     return (
         <AppContext.Provider
             value={{
-                login,
-                logout,
                 user,
                 reconnect,
                 chatMessages
@@ -188,19 +184,6 @@ export function App () {
         LOG_ON && console.log("createNewWebSocket END");
     }
 
-    async function login(userName: string, password: string) {
-        LOG_ON && console.log("login START");
-        await api.login(userName, password);
-        fetchUser();
-        LOG_ON && console.log("login END");
-    }
-
-    async function logout() {
-        LOG_ON && console.log("logout START");
-        await api.logout();
-        fetchUser();
-        LOG_ON && console.log("logout END");
-    }
 
 }
 

@@ -72,38 +72,65 @@ public class GameApi {
     }
 
     @PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE )
-    public void login( @RequestBody UserNameAndPassword userNameAndPassword, HttpServletRequest request) {
+    public void login( @RequestBody UserNameAndPassword userNameAndPassword, HttpServletResponse response, HttpServletRequest request) {
         UserDTO oldUser = getUserDTOFromRequest(request);
 
         request.getSession().invalidate();
         HttpSession session = request.getSession(true);
 
+        if (oldUser!=null){
+            ConnectionHandler.removeAndCloseWebSockets(oldUser.getId());
+        }
+
         if (userNameAndPassword.getUserName()==null || userNameAndPassword.getPassword()==null){
-            //FIXME ERROR HANDLING
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        session.setAttribute("user", businessManager.checkUserLogin(userNameAndPassword.getUserName(), userNameAndPassword.getPassword() ) ) ;
+        User foundUser = businessManager.findUserByUserName(userNameAndPassword.getUserName());
 
-        if (oldUser!=null && oldUser.getId()!=null){
-            ConnectionHandler.removeAndCloseWebSockets(oldUser.getId());
+        if (foundUser == null || !userNameAndPassword.getPassword().equals(foundUser.getPassword())){
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
         }
+
+        session.setAttribute("user", new UserDTO(foundUser));
     }
 
     @PostMapping(path = "/create-account", consumes = MediaType.APPLICATION_JSON_VALUE )
-    public void createAccount( @RequestBody UserNameAndPassword userNameAndPassword, HttpServletResponse response) {
-        User user = businessManager.findUserByUserName(userNameAndPassword.getPassword());
+    public void createAccount( @RequestBody UserNameAndPassword userNameAndPassword, HttpServletResponse response, HttpServletRequest request) {
+        UserDTO oldUser = getUserDTOFromRequest(request);
 
-        if (user != null){
-            response.setStatus(HttpServletResponse.SC_CONFLICT);
-            return;
-        } else {
-            user = new User();
-            user.setUserName(userNameAndPassword.getUserName());
-            user.setPassword(userNameAndPassword.getPassword());
-            businessManager.save(user);
+        request.getSession().invalidate();
+        HttpSession session = request.getSession(true);
+
+        if (oldUser!=null){
+            ConnectionHandler.removeAndCloseWebSockets(oldUser.getId());
         }
 
+        if (userNameAndPassword.getUserName()==null || userNameAndPassword.getPassword()==null){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        User foundUser = businessManager.findUserByUserName(userNameAndPassword.getUserName());
+
+        if (foundUser != null){
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            return;
+        }
+
+        if (userNameAndPassword.getUserName().length()<3 || userNameAndPassword.getPassword().length()<3){
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            return;
+        }
+
+        User newUser = new User();
+        newUser.setUserName(userNameAndPassword.getUserName());
+        newUser.setPassword(userNameAndPassword.getPassword());
+        businessManager.save(newUser);
+
+        session.setAttribute("user", new UserDTO(newUser));
     }
 
     @PostMapping(path = "/move", consumes = MediaType.APPLICATION_JSON_VALUE  )

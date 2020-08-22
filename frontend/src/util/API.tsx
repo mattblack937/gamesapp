@@ -4,6 +4,10 @@ import {LOG_ON} from "../App";
 
 const URL = "http://localhost:8080";
 
+function returnResponse (response: any){
+    return response;
+}
+
 class API{
 
     public async createLobby(gameType: GameType) {
@@ -43,8 +47,7 @@ class API{
             .catch((error=>{return null}));
     }
 
-    public async login(userName: string, password: string): Promise<boolean>{
-
+    public async login(userName: string, password: string): Promise<Error | undefined>{
         const res = await fetch(URL + '/login', {
             mode: 'cors',
             credentials: 'include',
@@ -58,10 +61,22 @@ class API{
                     password: password
                 }
             )
-        }).then( res =>{return res.ok });
+        }).then((response)=> {
+            if(response.ok){
+                return;
+            } else {
+                if(response.status == 404){
+                    return Error("Invalid UserName / Password");
+                } else {
+                    return Error("Unknown Error");
+                }
+            }
+        }).then(returnResponse);
 
         return res;
     }
+
+
 
     public async createNewAccount(userName: string, password: string) :Promise<Error | undefined> {
 
@@ -79,17 +94,18 @@ class API{
                 }
             )
         }).then(function(response) {
-            if (response.ok) {
+            if(response.ok){
                 return;
+            } else {
+                if(response.status == 409){
+                    return Error("UserName already taken");
+                } else if(response.status == 406){
+                    return Error("UserName and Password must be at least 3 letters");
+                } else {
+                    return Error("Unknown Error");
+                }
             }
-            console.log("response.status:", response.status);
-            console.log("response.statusText:", response.statusText);
-            return Error("UserName already taken");
-
-        }).then(function(response) {
-            console.log("response", response);
-            return response;
-        })
+        }).then(returnResponse);
 
         return res;
     }

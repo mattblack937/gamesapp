@@ -66,6 +66,8 @@
     background: gray;
     padding: 10px;
     display: grid;
+    border: 1px solid black;
+    box-shadow: 5px 5px 5px 5px rgba(0,0,0 , .3);
 }
 
 .login-z{
@@ -90,7 +92,27 @@
     font-size: 20px;
     font-weight: bold;
 }
+
+
+.login-z .error{
+    background: rgb(222, 118, 118);
+    width: 80%;
+    margin: auto;
+    text-align: center;
+    border-radius: 0 0 5px 5px;
+    padding: 5px;
+    transition: all .3s;
+}
+
+.login-z .error:hover{
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
 /*LOGIN*/
+
+
+
 
 
 .game-button:hover{
@@ -322,8 +344,16 @@
     content: "UserName";
 }
 
+.user-name-new input:not(:valid):not(:focus) + div:after{
+    content: "UserName (3+)";
+}
+
 .password input:not(:valid):not(:focus) + div:after{
     content: "Password";
+}
+
+.password-new input:not(:valid):not(:focus) + div:after{
+    content: "Password (3+)";
 }
 
 .password-again input:not(:valid):not(:focus) + div:after{

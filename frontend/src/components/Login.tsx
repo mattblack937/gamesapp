@@ -1,13 +1,10 @@
-import React, {FormEvent, useContext, useEffect, useState} from 'react';
-import {User} from "../util/types";
+import React, {useContext, useEffect, useState} from 'react';
 import {api} from "../util/API";
-import {func} from "prop-types";
 import { Key } from 'ts-keycode-enum';
 
-import {App, AppContext, LOG_ON} from "../App";
+import {App, AppContext} from "../App";
 import { ReactComponent as PlusSign } from '../svg/plus.svg';
 import { ReactComponent as BackSign } from '../svg/back.svg';
-import {async} from "q";
 
 enum Mode {
     LOGIN, REGISTRATION
@@ -57,11 +54,9 @@ export function Login () {
         _setMode(mode);
     };
 
-
     const [error, setError] = useState<string>("");
 
-
-    const { login, reconnect } = useContext(AppContext);
+    const { reconnect } = useContext(AppContext);
 
     const listener = (event: KeyboardEvent) => {
         if (event.keyCode === Key.Enter && isFilled()) {
@@ -78,7 +73,6 @@ export function Login () {
 
     return(
         <div className={"login-wrapper"}>
-            {error}
             <div className={"login-z"}>
                 <div className={"login" + (isFilled() ? " active" : "")} onClick={()=> isFilled() && submit()}>
                     {mode === Mode.LOGIN ?
@@ -94,11 +88,11 @@ export function Login () {
                             <div>Login</div>
                         </> :
                         <>
-                            <div className={"input-with-default-value user-name"}>
+                            <div className={"input-with-default-value user-name-new"}>
                                 <input key={3} autoComplete={"new-password"} value={userNameNew} required={true} autoFocus={true} onClick={(e)=> e.stopPropagation()} type='text' onChange={(e)=>setUserNameNew(e.target.value)}/>
                                 <div></div>
                             </div>
-                            <div className={"input-with-default-value password"}>
+                            <div className={"input-with-default-value password-new"}>
                                 <input key={4} value={passwordNew} required={true} onClick={(e)=> e.stopPropagation()} type='password' onChange={(e)=> setPasswordNew(e.target.value)}/>
                                 <div></div>
                             </div>
@@ -119,6 +113,12 @@ export function Login () {
                     }
                 </div>
                 }
+
+                {error &&
+                <div className={"error"} onClick={()=> setError("")}>
+                    {error}
+                </div>
+                }
             </div>
         </div>
 
@@ -135,29 +135,27 @@ export function Login () {
             setPasswordNew("");
             setPasswordAgain("");
         }
+        setError("");
     }
 
     async function submit() {
         if (modeRef.current === Mode.LOGIN){
-            login!(userNameRef.current, passwordRef.current)
+            let error = await api.login(userNameRef.current, passwordRef.current);
+            if(!error){
+                reconnect!();
+            } else {
+                setError(error.message);
+            }
         } else {
             if (passwordNewRef.current === passwordAgainRef.current){
-                try{
-                    const error = await api.createNewAccount!(userNameNewRef.current, passwordNewRef.current);
-                    console.log("error2: ", error);
-                    error && setError(error.message);
-
-
-                    // reconnect!();
-                } catch (e) {
-                    if(e.statusCode === 409){
-                        console.log("e:", e);
-                        console.log("409 madafaka");
-                    }
+                const error = await api.createNewAccount!(userNameNewRef.current, passwordNewRef.current);
+                if(error){
+                    setError(error.message);
+                } else {
+                    reconnect!();
                 }
-
             } else {
-                // TODO error
+                setError("Passwords must match");
             }
         }
     }
