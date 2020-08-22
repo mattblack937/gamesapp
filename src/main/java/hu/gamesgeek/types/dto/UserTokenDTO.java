@@ -2,14 +2,14 @@ package hu.gamesgeek.types.dto;
 
 public class UserTokenDTO {
 
-    private String userId;
+    private Long userId;
     private String token;
 
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

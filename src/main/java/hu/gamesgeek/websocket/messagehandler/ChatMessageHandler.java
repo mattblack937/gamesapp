@@ -12,7 +12,7 @@ public class ChatMessageHandler extends AbstractMessageHandler<ChatMessageDTO> {
 
 
     @Override
-    public void handleMessage(String userId, ChatMessageDTO wsMessage) {
+    public void handleMessage(Long userId, ChatMessageDTO wsMessage) {
         String a = "a";
     }
 

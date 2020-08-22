@@ -61,7 +61,7 @@ public class GroupHandler {
         group.getUsers().forEach(user-> updateUser(user));
     }
 
-    public static void sendInvite(UserDTO fromUser, String toUserId) {
+    public static void sendInvite(UserDTO fromUser, Long toUserId) {
         WSMessage wsMessage  = new WSMessage();
         wsMessage.setMessageType(MessageType.INVITE);
 

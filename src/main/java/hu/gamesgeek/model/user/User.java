@@ -8,6 +8,14 @@ import java.util.Set;
 @Table(name = "USERS")
 public class User extends BaseEntity {
 
+//    @PreRemove
+//    private void removeActorFromMovies() {
+//        for (User friend : friendTo) {
+//            friend.getFriends().remove(this);
+//        }
+//        setFriendTo(new HashSet<>());
+//    }
+
     @Column(name = "USERNAME")
     private String userName;
 
@@ -19,10 +27,13 @@ public class User extends BaseEntity {
 
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "FRIENDS",
+    @JoinTable(name = "FRIEND",
             joinColumns={ @JoinColumn(name = "FRIEND_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "FRIEND2_ID")})
+            inverseJoinColumns = { @JoinColumn(name = "FRIEND_TO_ID")})
     private Set<User> friends = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "friends")
+    private Set<User> friendTo = new HashSet<>();
 
 
     public String getUserName() {
@@ -59,13 +70,18 @@ public class User extends BaseEntity {
     }
 
 
-//    CREATE TABLE friend (
-//            friend_id BIGINT,
-//            friend2_id BIGINT,
-//            CONSTRAINT pk_friends PRIMARY KEY (friend_id, friend2_id)
-//);
+//    CREATE TABLE `friend` (
+//            `FRIEND_ID` bigint(20) NOT NULL,
+//  `FRIEND_TO_ID` bigint(20) NOT NULL,
+//    PRIMARY KEY (`FRIEND_ID`,`FRIEND_TO_ID`)
+//)
 
 
+    public Set<User> getFriendTo() {
+        return friendTo;
+    }
 
-
+    public void setFriendTo(Set<User> friendTo) {
+        this.friendTo = friendTo;
+    }
 }

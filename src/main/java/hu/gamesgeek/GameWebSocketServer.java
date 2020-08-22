@@ -30,7 +30,7 @@ public class GameWebSocketServer extends WebSocketServer {
     public void onMessage(WebSocket webSocket, String message) {
         try {
             WSMessage wsMessage = mapper.readValue(message, WSMessage.class);
-            String userId = ConnectionHandler.getUserIdByWebSocket(webSocket);
+            Long userId = ConnectionHandler.getUserIdByWebSocket(webSocket);
             if (userId == null){
                 if (wsMessage.getMessageType() == MessageType.USER_TOKEN){
                     boolean success = authenticate(mapper.readValue(wsMessage.getData(), UserTokenDTO.class), webSocket);
@@ -114,7 +114,7 @@ public class GameWebSocketServer extends WebSocketServer {
         }
     }
 
-    public static void sendMessage(String userId, WSMessage message) {
+    public static void sendMessage(Long userId, WSMessage message) {
         try {
             String messageJson = mapper.writeValueAsString(message);
             for(WebSocket webSocket: ConnectionHandler.getWebSocketsByUserId(userId)){

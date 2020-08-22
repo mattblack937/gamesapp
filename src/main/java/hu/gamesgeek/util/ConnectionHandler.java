@@ -8,10 +8,10 @@ import java.util.*;
 
 public abstract class ConnectionHandler {
 
-    private static Map<String, List<WebSocket>> userConnections = new HashMap<>();
+    private static Map<Long, List<WebSocket>> userConnections = new HashMap<>();
     private static List<UserTokenDTO> userTokens = new ArrayList<>();
 
-    public static Map<String, List<WebSocket>> getUserConnections() {
+    public static Map<Long, List<WebSocket>> getUserConnections() {
         return userConnections;
     }
 
@@ -19,8 +19,8 @@ public abstract class ConnectionHandler {
         return userTokens;
     }
 
-    public static String getUserIdByWebSocket(WebSocket webSocket) {
-        for (Map.Entry<String, List<WebSocket>> entry: userConnections.entrySet()) {
+    public static Long getUserIdByWebSocket(WebSocket webSocket) {
+        for (Map.Entry<Long, List<WebSocket>> entry: userConnections.entrySet()) {
             if (entry.getValue().contains(webSocket)) {
                 return entry.getKey();
             }
@@ -29,7 +29,7 @@ public abstract class ConnectionHandler {
     }
 
 
-    public static void addWebSocket(String userId, WebSocket webSocket) {
+    public static void addWebSocket(Long userId, WebSocket webSocket) {
         if (userConnections.containsKey(userId)) {
             List<WebSocket> webSockets = new ArrayList<>();
             webSockets.add(webSocket);
@@ -44,21 +44,21 @@ public abstract class ConnectionHandler {
         userTokens.remove(userToken);
     }
 
-    public static void removeAndCloseWebSockets(String userId) {
+    public static void removeAndCloseWebSockets(Long userId) {
         List<WebSocket> webSockets = userConnections.get(userId);
         userConnections.remove(userId);
         webSockets.forEach(webSocket -> webSocket.close());
     }
 
     public static void removeAndCloseWebSocket(WebSocket webSocket) {
-        String userId = getUserIdByWebSocket(webSocket);
+        Long userId = getUserIdByWebSocket(webSocket);
         if (userId != null) {
             removeWebSocket(userId, webSocket);
         }
         webSocket.close();
     }
 
-    private static void removeWebSocket(String userId, WebSocket webSocket) {
+    private static void removeWebSocket(Long userId, WebSocket webSocket) {
         List<WebSocket> webSockets = new ArrayList<>();
         webSockets.addAll(userConnections.get(userId));
         webSockets.remove(webSocket);
@@ -71,17 +71,17 @@ public abstract class ConnectionHandler {
 
     public static List<WebSocket> getWebSockets() {
         List<WebSocket> result = new ArrayList<>();
-        for(Map.Entry<String, List<WebSocket>> entry: userConnections.entrySet()){
+        for(Map.Entry<Long, List<WebSocket>> entry: userConnections.entrySet()){
             result.addAll(entry.getValue());
         }
         return result;
     }
 
-    public static List<WebSocket> getWebSocketsByUserId(String userId) {
+    public static List<WebSocket> getWebSocketsByUserId(Long userId) {
         return userConnections.containsKey(userId) ? userConnections.get(userId) : new ArrayList<>();
     }
 
-    public static Set<String> getAllUserIds() {
+    public static Set<Long> getAllUserIds() {
         return userConnections.keySet();
     }
 

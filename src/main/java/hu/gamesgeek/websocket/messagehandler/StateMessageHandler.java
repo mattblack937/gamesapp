@@ -47,7 +47,7 @@ public class StateMessageHandler extends AbstractMessageHandler<StateDTO> {
     }
 
     @Override
-    public void handleMessage(String userId, StateDTO wsMessage) {
+    public void handleMessage(Long userId, StateDTO wsMessage) {
 
     }
 
@@ -63,9 +63,9 @@ public class StateMessageHandler extends AbstractMessageHandler<StateDTO> {
 
     public static void updateUserLists(){
         BusinessManager businessManager = ServiceHelper.getService(BusinessManager.class);
-        Set<String> userIds = ConnectionHandler.getAllUserIds();
+        Set<Long> userIds = ConnectionHandler.getAllUserIds();
         List<UserDTO> users = new ArrayList<>();
-        for(String userId: userIds){
+        for(Long userId: userIds){
             UserDTO userDTO = businessManager.findUserDTOByUserId(userId);
             users.add(userDTO);
         }

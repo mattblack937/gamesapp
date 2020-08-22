@@ -5,7 +5,7 @@ import hu.gamesgeek.model.user.User;
 import java.util.Objects;
 
 public class UserDTO {
-    String id;
+    Long id;
     String name;
 
     public UserDTO() {
@@ -13,15 +13,15 @@ public class UserDTO {
     }
 
     public UserDTO(User user) {
-        this.id = String.valueOf(user.getId());
+        this.id = user.getId();
         this.name = user.getUserName();
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

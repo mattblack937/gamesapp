@@ -36,7 +36,7 @@ public class GameApi {
     ObjectMapper mapper = new ObjectMapper();
 
     @GetMapping(path = "/invite/{userId}" )
-    public void invite(@PathVariable String userId, HttpServletRequest request) {
+    public void invite(@PathVariable Long userId, HttpServletRequest request) {
         UserDTO user = getUserDTOFromRequest(request);
 
         if (userId == null){
@@ -279,7 +279,7 @@ public class GameApi {
     }
 
     @GetMapping("/accept-invite/{ownerId}")
-    public void acceptInvite(@PathVariable String ownerId, HttpServletRequest request) {
+    public void acceptInvite(@PathVariable Long ownerId, HttpServletRequest request) {
 
         UserDTO user = getUserDTOFromRequest(request);
         UserDTO owner = ServiceHelper.getService(BusinessManager.class).findUserDTOByUserId(ownerId);

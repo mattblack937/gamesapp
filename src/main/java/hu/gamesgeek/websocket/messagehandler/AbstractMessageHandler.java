@@ -4,7 +4,7 @@ import hu.gamesgeek.types.MessageType;
 
 public abstract class AbstractMessageHandler<T extends Object> {
 
-    abstract public void handleMessage(String userId, T wsMessage);
+    abstract public void handleMessage(Long userId, T wsMessage);
 
     public abstract MessageType getMessageType();
 
