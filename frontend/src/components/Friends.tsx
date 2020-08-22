@@ -39,6 +39,82 @@ export function Friends () {
             id: "3",
             name: "MARCIMARCIMARCIMARCI",
             state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
+        } as User,{
+            id: "3",
+            name: "MARCIMARCIMARCIMARCI",
+            state: UserState.OFFLINE
         } as User,
         {
             name: "ROBI",
@@ -67,7 +143,7 @@ export function Friends () {
             {isOpen ?
                 <Modal isOpen={isOpen} closeOnBackGroundClick={true} close={()=> setIsOpen(false)}>
                     <div className={"friend-list"}>
-                        {friends.sort((a, b) => a.state===UserState.ONLINE ? 1 : -1).map((friend, key) =>
+                        {friends.sort((a, b) => a.state===UserState.ONLINE ? -1 : 1).map((friend, key) =>
                             <FriendCard key={key} friend={friend} />
                         )}
                     </div>
