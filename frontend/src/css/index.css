@@ -8,6 +8,7 @@ body {
   user-select: none;
   color: black;
   overflow: hidden;
+  background-color: rgb(60, 60, 60);
 }
 
 input{
