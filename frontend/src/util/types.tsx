@@ -1,10 +1,13 @@
 import {GameState, GameType, MessageType} from "./enums";
 
-
+export enum UserState  {
+    ONLINE = "online", OFFLINE = "offline"
+}
 
 export type User = {
     id: string,
-    name: string
+    name: string,
+    state: UserState
 }
 
 export type WSMessage = {

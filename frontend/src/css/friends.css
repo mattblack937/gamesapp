@@ -1,0 +1,64 @@
+.friends-logo{
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    background: lightgray;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all .3s;
+}
+
+.friends-logo:hover{
+    transform: scale(1.1);
+}
+
+.friends .modal{
+    /*background: none!important;*/
+}
+
+.friend-list{
+    position: absolute;
+    bottom: 90px;
+    right: 30px;
+    background: lightgray;
+    border-radius: 5px;
+    padding: 5px;
+    width: 250px;
+}
+
+.friend-card{
+    border: 1px solid black;
+    padding: 10px;
+    margin: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 20px;
+    transition: all .2s ease;
+}
+
+.friend-card:hover{
+    margin-right: 0;
+    cursor: pointer;
+}
+
+.friend-state{
+    min-width: 20px;
+    height: 20px;
+    margin-left: 4px;
+    border-radius: 50%;
+}
+
+.friend-state.online{
+    background: rgb(100, 200, 100)
+}
+
+.friend-state.offline{
+    background: gray;
+}
+
+.friend-name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

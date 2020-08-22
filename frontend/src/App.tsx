@@ -9,6 +9,9 @@ import {api} from "./util/API";
 
 import {Header} from "./components/Header";
 import {Chat} from "./components/Chat";
+import {Modal} from "./components/Modal";
+import {Friends} from "./components/Friends";
+
 
 export const AppContext = React.createContext<Partial<ContextProps>>({});
 
@@ -32,6 +35,8 @@ export function App () {
         _setChatMessages(chatMessages);
     };
 
+    const [isOpen, setIsOpen] = useState<boolean>(true);
+
     useEffect(() => {
         LOG_ON && console.log("HERE WE GO!");
     }, []);
@@ -47,6 +52,17 @@ export function App () {
         LOG_ON && console.log("useEffect END");
     }, [user]);
 
+
+
+
+    const disableInModal = (f: () => any) => () => {
+        if (isOpen){
+            return;
+        } else {
+            f();
+        }
+    };
+
     if(user === undefined){
         return null;
     }
@@ -61,6 +77,25 @@ export function App () {
 
 
             <div className="app">
+
+                {/*<div className={"hello-button"} onClick={disableInModal(() => alert("HELLO"))}>*/}
+                    {/*ALERT*/}
+                {/*</div>*/}
+
+                {/*<div className={"hello-button"} onClick={()=> setIsOpen(!isOpen)}>*/}
+                    {/*HELLO*/}
+                {/*</div>*/}
+
+                {/*<Modal isOpen={true}>*/}
+                    {/*<div className={"contnet"}>*/}
+                        {/*HELLO*/}
+                    {/*</div>*/}
+                {/*</Modal>*/}
+
+                {/*<Modal isOpen = {isOpen}>*/}
+                    {/*<div>MODAL OPEN</div>*/}
+                {/*</Modal>*/}
+
                 <Switch>
 
                     { !user &&
@@ -69,8 +104,11 @@ export function App () {
                     </Route>
                     }
 
+
+
                     <Route exact={true} path={"/"} >
                         <Header />
+                        <Friends/>
                         <Chat />
                     </Route>
 
