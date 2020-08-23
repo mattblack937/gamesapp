@@ -1,4 +1,4 @@
-import React, {ReactNode, useContext, useEffect} from 'react';
+import React, {CSSProperties, ReactNode, useContext, useEffect} from 'react';
 import {api} from "../util/API";
 
 import {AppContext, LOG_ON} from "../App";

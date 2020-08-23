@@ -8,10 +8,8 @@ import {api} from "../util/API";
 
 export function Chat () {
 
-    const saySomething = "";
-
-    const [text, _setText] = useState(saySomething);
-    const { chatMessages, user } = useContext(AppContext);
+    const [text, _setText] = useState("");
+    const { chatMessages, user, } = useContext(AppContext);
 
     const textRef = React.useRef(text);
     const setText = (text: string) => {
@@ -23,7 +21,7 @@ export function Chat () {
         console.log("text:", textRef.current);
         if (event.keyCode === Key.Enter && textRef.current != "") {
             api.sendChatMessage(textRef.current);
-            setText(saySomething);
+            setText("");
         }
     };
 

@@ -1,10 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {api} from "../util/API";
-import { Key } from 'ts-keycode-enum';
+import {Key} from 'ts-keycode-enum';
 
-import {App, AppContext} from "../App";
-import { ReactComponent as PlusSign } from '../svg/plus.svg';
-import { ReactComponent as BackSign } from '../svg/back.svg';
+import {AppContext} from "../App";
+import {ReactComponent as PlusSign} from '../svg/plus.svg';
+import {ReactComponent as BackSign} from '../svg/back.svg';
 
 enum Mode {
     LOGIN, REGISTRATION

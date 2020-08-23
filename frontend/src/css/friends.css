@@ -8,9 +8,27 @@
     border-radius: 5px;
     cursor: pointer;
     transition: all .3s;
+    width: 50px;
+    height: 40px;
 }
 
 .friends-logo:hover{
+    transform: scale(1.1);
+}
+
+.add-friend-logo{
+    position: absolute;
+    bottom: 30px;
+    right: 90px;
+    background: lightgray;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all .3s;
+    width: 40px;
+    height: 40px;
+}
+
+.add-friend-logo:hover{
     transform: scale(1.1);
 }
 
@@ -31,6 +49,7 @@
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: white black;
+    overflow-y: auto;
 }
 
 .friend-card{
@@ -45,7 +64,7 @@
 }
 
 .friend-card:hover{
-    margin-right: 0;
+    margin-right: 5px;
     cursor: pointer;
 }
 
@@ -68,4 +87,34 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.add-new-friend{
+    position: fixed;
+    margin: auto;
+    background: gray;
+    top: 50%;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.add-new-friend.filled{
+    background: lightgrey;
+}
+
+
+.add-new-friend.filled{
+    cursor: pointer;
+}
+
+.add-new-friend .plus-sign{
+    transition: all .3s ease;
+}
+
+.add-new-friend.filled:hover .plus-sign{
+    transform: scale(.9);
 }

@@ -80,7 +80,7 @@
     color: black;
 }
 
-.login input{
+input{
     margin: 5px auto;
     font-size: 30px;
     border-radius: 6px;
@@ -390,5 +390,13 @@
     left: 0;
     position: relative;
     z-index: 100;
+}
+
+.modal-background .modal-background{
+    z-index: 101;
+}
+
+.modal-content .modal-content{
+    z-index: 102;
 }
 
