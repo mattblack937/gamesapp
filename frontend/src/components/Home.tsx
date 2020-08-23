@@ -14,14 +14,11 @@ type HomeProps = {
     invites: User[]
 }
 
-export function Home ({group, user, users, invites}: HomeProps) {
+export function Home () {
 
     return (
         <div >
-            <GameSettingsComponent/>
-            <GroupComponent group={group} user={user}/>
-            <UsersComponent users={users} user={user}/>
-            <InvitesComponent invites={invites} user={user}/>
+            HOME
         </div>
     );
 }

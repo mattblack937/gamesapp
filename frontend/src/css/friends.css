@@ -112,10 +112,11 @@
 
 .add-new-friend .plus-sign{
     transition: all .3s ease;
+    margin-left: 5px;
 }
 
 .add-new-friend.filled:hover .plus-sign{
-    transform: scale(.9);
+    transform: scale(1.1);
 }
 
 .add-new-friend{

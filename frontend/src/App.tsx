@@ -11,6 +11,9 @@ import {Header} from "./components/Header";
 import {Chat} from "./components/Chat";
 import {Modal} from "./components/Modal";
 import {Friends} from "./components/Friends";
+import {Key} from "ts-keycode-enum";
+import {ReactComponent as LogoutLogo} from "./svg/logout.svg";
+import {Home} from "./components/Home";
 
 
 export const AppContext = React.createContext<Partial<ContextProps>>({});
@@ -22,13 +25,20 @@ export type ContextProps = {
     user: User | null,
     reconnect: () => void,
     chatMessages: ChatMessage[],
-    friends: User[]
+    friends: User[],
+    setContentMode: (contentMode: ContentMode) => void
 };
+
+export enum ContentMode  {
+    HOME, CHAT
+}
 
 export function App () {
     const [user, setUser] = useState<User | null | undefined>(undefined);
     const [friends, setFriends] = useState<User[]>([]);
     const [webSocket, setWebsocket] = useState<WebSocket | null>(null);
+
+    const [contentMode, setContentMode] = useState<ContentMode>(ContentMode.HOME);
 
     const [chatMessages, _setChatMessages] = useState<ChatMessage[]>([]);
     const chatMessagesRef = React.useRef(chatMessages);
@@ -78,29 +88,11 @@ export function App () {
                 user,
                 reconnect,
                 chatMessages,
-                friends
+                friends,
+                setContentMode
             }}>
 
-
             <div className="app">
-
-                {/*<div className={"hello-button"} onClick={disableInModal(() => alert("HELLO"))}>*/}
-                    {/*ALERT*/}
-                {/*</div>*/}
-
-                {/*<div className={"hello-button"} onClick={()=> setIsOpen(!isOpen)}>*/}
-                    {/*HELLO*/}
-                {/*</div>*/}
-
-                {/*<Modal isOpen={true}>*/}
-                    {/*<div className={"contnet"}>*/}
-                        {/*HELLO*/}
-                    {/*</div>*/}
-                {/*</Modal>*/}
-
-                {/*<Modal isOpen = {isOpen}>*/}
-                    {/*<div>MODAL OPEN</div>*/}
-                {/*</Modal>*/}
 
                 <Switch>
 
@@ -110,19 +102,35 @@ export function App () {
                     </Route>
                     }
 
-
-
                     <Route exact={true} path={"/"} >
+
                         <Header />
                         <Friends/>
-                        <Chat />
+
+                        <div className={"content"}>
+                            <Content />
+                        </div>
+
                     </Route>
 
                     <Redirect to="" />
+
                 </Switch>
             </div>
         </AppContext.Provider>
     );
+
+    function Content () {
+        switch (contentMode) {
+            case ContentMode.HOME:
+                return(<Home/>);
+            case ContentMode.CHAT:
+                return(<Chat/>);
+        }
+
+
+        return null;
+    }
 
     async function fetchFriends(){
         LOG_ON && console.log("fetchUser START");

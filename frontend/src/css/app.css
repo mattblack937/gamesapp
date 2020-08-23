@@ -120,19 +120,19 @@ input{
 }
 
 
-/*CHAT*/
+/*!*CHAT*!*/
 .chat{
-    /*background: red;*/
-    width: 800px;
-    margin: 0 auto;
-    /*overflow: hidden;*/
-
+    height: 100%;
+    width: 1000px;
+    margin: auto;
+    border: 1px solid white;
+    box-shadow: inset 0 0 10px rgb(255, 255, 255);
 }
 
 .chat .messages{
     /*     display: revert; */
     height: 40vh;
-    height: calc(100vh - 300px);
+    height: calc(100% - 100px);
     /*! margin: -20px; */
     /*! margin: 0; */
 
@@ -165,18 +165,14 @@ input{
     font-weight: bold;
 }
 
-.chat .user-input{
-    /*background: green;*/
-    height: 160px;
-    padding-top: 40px;
-}
-
 .chat input{
+    margin-top: 20px;
     display: block;
-    margin: auto;
     font-size: 2rem;
 }
-/*CHAT*/
+
+
+/*!*CHAT*!*/
 
 /*MENU*/
 .menu-container{
@@ -400,3 +396,9 @@ input{
     z-index: 102;
 }
 
+.content{
+    height: calc(100% - 120px);
+    width: calc(100% - 20px);
+    position: relative;
+    padding: 10px;
+}

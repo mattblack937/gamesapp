@@ -1,32 +1,29 @@
 import React, {useContext, useEffect} from 'react';
 import {api} from "../util/API";
 
-import {AppContext} from "../App";
+import {AppContext, ContentMode} from "../App";
 import '../css/header.css';
 
-import { ReactComponent as LogoutLogo } from '../svg/logout.svg';
-import { ReactComponent as ReconnectLogo } from '../svg/reconnect.svg';
+import {ReactComponent as LogoutLogo} from '../svg/logout.svg';
+import {ReactComponent as ReconnectLogo} from '../svg/reconnect.svg';
 
 import {Key} from "ts-keycode-enum";
 
 type MenuButtonProps = {
     text: string
-    id: string
+    contentMode: ContentMode
 }
 
 export function Header () {
 
-    const { user, reconnect } = useContext(AppContext);
+    const { user, reconnect, setContentMode } = useContext(AppContext);
 
     return (
         <div className={"header"}>
 
             <div className={"header-buttons"}>
-                <HeaderButton id={"game"} text={"GAME"}/>
-                <HeaderButton id={"s"} text={"CHAT"}/>
-                <HeaderButton id={"s"} text={"PROFILE"}/>
-                <HeaderButton id={"s"} text={"PROFILE"}/>
-
+                <HeaderButton text={"GAME"} contentMode={ContentMode.HOME} />
+                <HeaderButton text={"CHAT"} contentMode={ContentMode.CHAT}/>
             </div>
 
             <div className={"header-left"}>
@@ -40,9 +37,9 @@ export function Header () {
         </div>
     );
 
-    function HeaderButton( {id, text}: MenuButtonProps) {
+    function HeaderButton( {contentMode, text}: MenuButtonProps) {
         return (
-            <div className={"header-button"}>
+            <div className={"header-button"} onClick={()=> setContentMode!(contentMode)}>
                 {text}
             </div>
         );
