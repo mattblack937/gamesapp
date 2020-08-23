@@ -36,6 +36,35 @@ public class User extends BaseEntity {
     private Set<User> friendTo = new HashSet<>();
 
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "FRIEND_REQUEST",
+            joinColumns={ @JoinColumn(name = "REQUESTER_ID") },
+            inverseJoinColumns = { @JoinColumn(name = "REQUESTED_ID")})
+    private Set<User> friendRequests = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "friendRequests")
+    private Set<User> requestedBy = new HashSet<>();
+
+//    DROP TABLE IF EXISTS `friend_request`;
+//    CREATE TABLE IF NOT EXISTS `friend_request` (
+//            `REQUESTER_ID` bigint(20) NOT NULL,
+//  `REQUESTED_ID` bigint(20) NOT NULL,
+//    KEY `REQUESTER_ID` (`REQUESTER_ID`),
+//    KEY `REQUESTED_ID` (`REQUESTED_ID`)
+//            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+//
+//--
+//        -- Constraints for dumped tables
+//--
+//
+//        --
+//        -- Constraints for table `friend_request`
+//            --
+//    ALTER TABLE `friend_request`
+//    ADD CONSTRAINT `FK_REQUESTED_ID` FOREIGN KEY (`REQUESTED_ID`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+//    ADD CONSTRAINT `FK_REQUESTER_ID` FOREIGN KEY (`REQUESTER_ID`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+//    COMMIT;
+
     public String getUserName() {
         return userName;
     }
@@ -83,5 +112,21 @@ public class User extends BaseEntity {
 
     public void setFriendTo(Set<User> friendTo) {
         this.friendTo = friendTo;
+    }
+
+    public Set<User> getFriendRequests() {
+        return friendRequests;
+    }
+
+    public void setFriendRequests(Set<User> friendRequests) {
+        this.friendRequests = friendRequests;
+    }
+
+    public Set<User> getRequestedBy() {
+        return requestedBy;
+    }
+
+    public void setRequestedBy(Set<User> requestedBy) {
+        this.requestedBy = requestedBy;
     }
 }

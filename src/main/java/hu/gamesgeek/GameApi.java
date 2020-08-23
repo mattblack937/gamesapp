@@ -98,7 +98,7 @@ public class GameApi {
     }
 
     @PostMapping(path = "/create-account", consumes = MediaType.APPLICATION_JSON_VALUE )
-    public void createAccount( @RequestBody UserNameAndPassword userNameAndPassword, HttpServletResponse response, HttpServletRequest request) {
+    public void createAccount(@RequestBody UserNameAndPassword userNameAndPassword, HttpServletResponse response, HttpServletRequest request) {
         UserDTO oldUser = getUserDTOFromRequest(request);
 
         request.getSession().invalidate();
@@ -133,6 +133,49 @@ public class GameApi {
         session.setAttribute("user", new UserDTO(newUser));
     }
 
+    @PostMapping(path = "/friend-request", consumes = MediaType.APPLICATION_JSON_VALUE )
+    public void friendRequest(@RequestBody String userName, HttpServletResponse response, HttpServletRequest request) {
+        UserDTO userDTO = getUserDTOFromRequest(request);
+
+        if(userName == null || userName.isEmpty()){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        if (userName.equals(userDTO.getName())){
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            return;
+        }
+
+        User foundUser = businessManager.findUserByUserName(userName);
+        if (foundUser == null){
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        User currentUser = businessManager.findUserByUserName(userDTO.getName());
+        if (currentUser.getFriends().contains(foundUser)){
+            response.setStatus(HttpServletResponse.SC_FOUND);
+            return;
+        }
+
+        if (currentUser.getFriendRequests().contains(foundUser)){
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
+        //OK...
+
+        if (foundUser.getFriendRequests().contains(currentUser)){
+            foundUser.getFriendRequests().remove(currentUser);
+            businessManager.createFriendship(currentUser, foundUser);
+            return;
+        }
+
+        currentUser.getFriendRequests().add(foundUser);
+        businessManager.save(currentUser);
+    }
+
     @PostMapping(path = "/move", consumes = MediaType.APPLICATION_JSON_VALUE  )
     public void move( @RequestBody String  moveJSON, HttpServletRequest request) {
         UserDTO user = getUserDTOFromRequest(request);
@@ -159,7 +202,7 @@ public class GameApi {
     }
 
     @PostMapping(path = "/chat-message", consumes = MediaType.APPLICATION_JSON_VALUE  )
-    public void chatMessage( @RequestBody String text, HttpServletRequest request) {
+    public void chatMessage(@RequestBody String text, HttpServletRequest request) {
         UserDTO user = getUserDTOFromRequest(request);
 
         if(!StringUtils.isEmpty(text)){

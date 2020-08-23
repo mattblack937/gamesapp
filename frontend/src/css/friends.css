@@ -89,26 +89,25 @@
     white-space: nowrap;
 }
 
-.add-new-friend{
+.add-new-friend-wrapper{
     position: fixed;
     margin: auto;
-    background: gray;
     top: 50%;
     position: fixed;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.add-new-friend{
+    background: gray;
     display: flex;
     padding: 10px;
     border-radius: 10px;
+    cursor: pointer;
 }
 
 .add-new-friend.filled{
     background: lightgrey;
-}
-
-
-.add-new-friend.filled{
-    cursor: pointer;
 }
 
 .add-new-friend .plus-sign{
@@ -117,4 +116,29 @@
 
 .add-new-friend.filled:hover .plus-sign{
     transform: scale(.9);
+}
+
+.add-new-friend{
+    box-shadow: 5px 5px 5px 5px rgba(0,0,0 , .3);
+}
+
+.add-new-friend-wrapper .error{
+    background: rgb(222, 118, 118);
+    width: 80%;
+    margin: auto;
+    text-align: center;
+    border-radius: 0 0 5px 5px;
+    padding: 5px;
+    transition: all .3s;
+}
+
+.add-new-friend-wrapper .error:hover{
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
+.add-new-friend{
+    border: 1px solid black;
+    position: relative;
+    z-index: 2;
 }

@@ -38,6 +38,8 @@ export function Friends () {
         }
     ]);
 
+
+
     const friendsLogo =
         <div className={"friends-logo"} onClick={()=> {setFriendsOpen(!friendsOpen);setAddNewFriendOpen(false)}}>
             <FriendsLogo/>
@@ -88,12 +90,11 @@ export function Friends () {
 
     function AddNewFriendComp() {
 
+        const [error, setError] = useState<string>("");
 
         function isFilled(){
             return userNameRef.current != "";
         }
-
-
 
         const [userName, _setUserName] = useState("");
         const userNameRef = React.useRef(userName);
@@ -103,23 +104,35 @@ export function Friends () {
         };
 
         async function addNewFriend(userName: string) {
-            // TODO
-            setUserName("");
-            setAddNewFriendOpen(false);
-            setFriendsOpen(false);
+            let error = await api.requestFriend(userName);
+            if(!error){
+                setUserName("");
+                setAddNewFriendOpen(false);
+                setFriendsOpen(false);
+            } else {
+                setError(error.message);
+            }
         }
 
-
         return (
-            <div className={"add-new-friend" + (isFilled() ? " filled" : "")}>
-                <div className={"input-with-default-value user-name"}>
-                    <input value={userName} required={true} autoFocus={true} onClick={(e)=> e.stopPropagation()} type='text' onChange={(e)=>setUserName(e.target.value)}/>
-                    <div></div>
+            <div className={"add-new-friend-wrapper"}>
+                <div className={"add-new-friend" + (isFilled() ? " filled" : "")}  onClick={()=> isFilled() && addNewFriend(userNameRef.current)}>
+                    <div className={"input-with-default-value user-name"}>
+                        <input value={userName} required={true} autoFocus={true} onClick={(e)=> e.stopPropagation()} type='text' onChange={(e)=>setUserName(e.target.value)}/>
+                        <div></div>
+                    </div>
+                    <div className={"plus-sign"}>
+                        <PlusLogo70/>
+                    </div>
                 </div>
-                <div className={"plus-sign"} onClick={()=> isFilled() && addNewFriend(userNameRef.current)}>
-                    <PlusLogo70/>
+
+                {error &&
+                <div className={"error"} onClick={()=> setError("")}>
+                    {error}
                 </div>
+                }
             </div>
+
         );
     }
 

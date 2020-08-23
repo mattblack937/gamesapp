@@ -77,6 +77,37 @@ class API{
     }
 
 
+    public async requestFriend(userName: string) :Promise<Error | undefined> {
+
+        const res = await fetch(URL + '/friend-request', {
+            mode: 'cors',
+            credentials: 'include',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: userName
+        }).then(function(response) {
+            if(response.ok){
+                return;
+            } else {
+                if(response.status == 409){
+                    return Error("You cannot add yourself as friend");
+                } else if(response.status == 404){
+                    return Error("There is no user with this name");
+                } else if(response.status == 302){
+                    return Error("You are already friends");
+                } else if(response.status == 403){
+                    return Error("You already sent a request to this user");
+                } else {
+                    return Error("Unknown Error");
+                }
+            }
+        }).then(returnResponse);
+
+        return res;
+    }
 
     public async createNewAccount(userName: string, password: string) :Promise<Error | undefined> {
 
