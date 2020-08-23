@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {ChatMessage} from "../util/types";
 import {AppContext} from "../App";
 import { ReactComponent as SendLogo } from '../svg/send.svg';
@@ -32,6 +32,17 @@ export function Chat () {
         };
     }, []);
 
+
+    const messagesEndRef = useRef(null)
+
+    const scrollToBottom = () => {
+        // @ts-ignore
+        messagesEndRef.current.scrollIntoView()
+    }
+
+    useEffect(scrollToBottom, [chatMessages]);
+
+
     return (
         <div className={"chat"}>
             <div className={"messages"}>
@@ -45,6 +56,7 @@ export function Chat () {
                         </div>
                     </div>
                 )}
+                <div ref={messagesEndRef} />
             </div>
             <div className={"user-input"}>
                 <input value={text} onChange={(event) => setText(event.target.value)}/>
