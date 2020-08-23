@@ -1,12 +1,15 @@
 package hu.gamesgeek.types.dto;
 
 import hu.gamesgeek.model.user.User;
+import hu.gamesgeek.types.UserState;
 
 import java.util.Objects;
 
 public class UserDTO {
     Long id;
     String name;
+    UserState userState;
+
 
     public UserDTO() {
 
@@ -31,6 +34,14 @@ public class UserDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public UserState getUserState() {
+        return userState;
+    }
+
+    public void setUserState(UserState userState) {
+        this.userState = userState;
     }
 
     @Override

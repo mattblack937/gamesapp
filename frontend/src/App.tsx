@@ -21,11 +21,13 @@ export const LOG_ON = true;
 export type ContextProps = {
     user: User | null,
     reconnect: () => void,
-    chatMessages: ChatMessage[]
+    chatMessages: ChatMessage[],
+    friends: User[]
 };
 
 export function App () {
     const [user, setUser] = useState<User | null | undefined>(undefined);
+    const [friends, setFriends] = useState<User[]>([]);
     const [webSocket, setWebsocket] = useState<WebSocket | null>(null);
 
     const [chatMessages, _setChatMessages] = useState<ChatMessage[]>([]);
@@ -48,6 +50,9 @@ export function App () {
             fetchUser();
         } else {
             createNewWebSocket(user);
+            if (user != null){
+                fetchFriends();
+            }
         }
         LOG_ON && console.log("useEffect END");
     }, [user]);
@@ -72,7 +77,8 @@ export function App () {
             value={{
                 user,
                 reconnect,
-                chatMessages
+                chatMessages,
+                friends
             }}>
 
 
@@ -118,6 +124,14 @@ export function App () {
         </AppContext.Provider>
     );
 
+    async function fetchFriends(){
+        LOG_ON && console.log("fetchUser START");
+        let friends = await api.getFriends();
+        console.log("friends:", friends);
+        setFriends(friends);
+        LOG_ON && console.log("fetchUser END");
+    }
+
     async function fetchUser(){
         LOG_ON && console.log("fetchUser START");
         let user = await api.getUser();
@@ -146,6 +160,7 @@ export function App () {
         setWebsocket(null);
 
         setChatMessages([]);
+        setFriends([]);
 
         LOG_ON && console.log("setInitialState END");
     }

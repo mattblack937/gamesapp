@@ -38,13 +38,22 @@ class API{
         return res as User;
     }
 
+    public async getFriends(): Promise<User[]>{
+        let res = await fetch(URL + '/friends', {
+            method: 'GET',
+            credentials: 'include'
+        }).then( res => res.json())
+            .then( returnResponse);
+        LOG_ON && console.log("api.getFriends" + res);
+        return res as User[];
+    }
+
     public async logout() {
         let res = await fetch(URL + '/logout', {
             method: 'GET',
             credentials: 'include'
         }).then( res => res.json())
-            .then( res =>{return res})
-            .catch((error=>{return null}));
+            .then( returnResponse);
     }
 
     public async login(userName: string, password: string): Promise<Error | undefined>{

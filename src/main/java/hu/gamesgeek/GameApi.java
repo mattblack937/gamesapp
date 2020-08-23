@@ -2,12 +2,14 @@ package hu.gamesgeek;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import hu.gamesgeek.game.Game;
 import hu.gamesgeek.game.Group;
 import hu.gamesgeek.game.amoba.AmobaMoveDTO;
 import hu.gamesgeek.model.user.User;
 import hu.gamesgeek.types.GameType;
 import hu.gamesgeek.model.user.BusinessManager;
+import hu.gamesgeek.types.UserState;
 import hu.gamesgeek.types.dto.ChatMessageDTO;
 import hu.gamesgeek.util.*;
 import hu.gamesgeek.types.MessageType;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -263,6 +266,25 @@ public class GameApi {
 
         try {
             return mapper.writeValueAsString(user);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @GetMapping("/friends")
+    public String getFriends(HttpServletRequest request) {
+        User user = businessManager.findUserById(getUserDTOFromRequest(request).getId());
+
+        List<UserDTO> friends = Lists.newArrayList();
+        for (User friend: user.getFriends()){
+            UserDTO userDTO = new UserDTO(friend);
+            userDTO.setUserState(ConnectionHandler.getWebSocketsByUserId(friend.getId()).isEmpty() ? UserState.offline : UserState.online);
+            friends.add(userDTO);
+        }
+
+        try {
+            return mapper.writeValueAsString(friends);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return null;

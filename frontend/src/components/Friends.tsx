@@ -17,28 +17,7 @@ export function Friends () {
 
     const [addNewFriendOpen, setAddNewFriendOpen] = useState<boolean>(false);
 
-    const [friends, setFriends] = useState<User[]>([
-        {
-            name: "ROBI",
-            id: "1",
-            state: UserState.ONLINE
-        } as User,
-        {
-            id: "3",
-            name: "MARCIMARCIMARCIMARCI",
-            state: UserState.OFFLINE
-        } as User,{
-            id: "3",
-            name: "MARCIMARCIMARCIMARCI",
-            state: UserState.OFFLINE
-        } as User,{
-            id: "3",
-            name: "MARCIMARCIMARCIMARCI",
-            state: UserState.OFFLINE
-        }
-    ]);
-
-
+    const {friends}  = useContext(AppContext);
 
     const friendsLogo =
         <div className={"friends-logo"} onClick={()=> {setFriendsOpen(!friendsOpen);setAddNewFriendOpen(false)}}>
@@ -56,7 +35,7 @@ export function Friends () {
             <Modal isOpen={friendsOpen} closeOnBackGroundClick={true} close={()=> {setFriendsOpen(false); setAddNewFriendOpen(false)}}>
 
                 <div className={"friend-list"}>
-                    {friends.sort((a, b) => a.state===UserState.ONLINE ? -1 : 1).map((friend, key) =>
+                    {friends && friends.sort((a, b) => a.name < b.name ? 1 : -1).sort((a, b) => a.userState===UserState.ONLINE ? -1 : 1).map((friend, key) =>
                         <FriendCard key={key} friend={friend} />
                     )}
                 </div>
@@ -83,7 +62,7 @@ export function Friends () {
                 <div className={"friend-name"}>
                     {friend.name}
                 </div>
-                <div className={"friend-state " + (friend.state.toString())}/>
+                <div className={"friend-state " + (friend.userState.toString())}/>
             </div>
         );
     }

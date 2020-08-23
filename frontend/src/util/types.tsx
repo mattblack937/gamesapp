@@ -7,7 +7,7 @@ export enum UserState  {
 export type User = {
     id: string,
     name: string,
-    state: UserState
+    userState: UserState
 }
 
 export type WSMessage = {
