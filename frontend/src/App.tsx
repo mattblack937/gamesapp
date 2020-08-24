@@ -60,9 +60,9 @@ export function App () {
             fetchUser();
         } else {
             createNewWebSocket(user);
-            if (user != null){
-                fetchFriends();
-            }
+            // if (user != null){
+            //     fetchFriends();
+            // }
         }
         LOG_ON && console.log("useEffect END");
     }, [user]);
@@ -132,13 +132,13 @@ export function App () {
         return null;
     }
 
-    async function fetchFriends(){
-        LOG_ON && console.log("fetchUser START");
-        let friends = await api.getFriends();
-        console.log("friends:", friends);
-        setFriends(friends);
-        LOG_ON && console.log("fetchUser END");
-    }
+    // async function fetchFriends(){
+    //     LOG_ON && console.log("fetchUser START");
+    //     let friends = await api.getFriends();
+    //     console.log("friends:", friends);
+    //     setFriends(friends);
+    //     LOG_ON && console.log("fetchUser END");
+    // }
 
     async function fetchUser(){
         LOG_ON && console.log("fetchUser START");
@@ -200,6 +200,9 @@ export function App () {
                             break;
                         case MessageType.INVITE.valueOf():
                             // app.addInvite(JSON.parse(message.data) as User);
+                            break;
+                        case MessageType.FRIEND_LIST.valueOf():
+                            setFriends(JSON.parse(message.data) as User[]);
                             break;
                     }
                 };

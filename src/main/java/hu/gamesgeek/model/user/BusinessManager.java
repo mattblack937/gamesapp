@@ -38,6 +38,12 @@ public class BusinessManager {
                 " WHERE user.id = ?1", User.class, id);
     }
 
+    public User findEagerUserById(Long id) {
+        return crudManager.runSingleResultJPQL("SELECT user FROM " + User.class.getSimpleName() + " user" +
+                " LEFT JOIN FETCH user.friends " +
+                " WHERE user.id = ?1", User.class, id);
+    }
+
     public <E extends BaseEntity> E save(E entity) {
         return crudManager.save(entity);
     }

@@ -5,5 +5,6 @@ public enum MessageType {
     USER_TOKEN,
     CHAT_MESSAGE,
     LOBBY,
-    INVITE
+    INVITE,
+    FRIEND_LIST
 }

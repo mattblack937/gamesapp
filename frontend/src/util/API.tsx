@@ -38,22 +38,21 @@ class API{
         return res as User;
     }
 
-    public async getFriends(): Promise<User[]>{
-        let res = await fetch(URL + '/friends', {
-            method: 'GET',
-            credentials: 'include'
-        }).then( res => res.json())
-            .then( returnResponse);
-        LOG_ON && console.log("api.getFriends" + res);
-        return res as User[];
-    }
+    // public async getFriends(): Promise<User[]>{
+    //     let res = await fetch(URL + '/friends', {
+    //         method: 'GET',
+    //         credentials: 'include'
+    //     }).then( res => res.json())
+    //         .then( returnResponse);
+    //     LOG_ON && console.log("api.getFriends" + res);
+    //     return res as User[];
+    // }
 
     public async logout() {
         let res = await fetch(URL + '/logout', {
             method: 'GET',
             credentials: 'include'
-        }).then( res => res.json())
-            .then( returnResponse);
+        });
     }
 
     public async login(userName: string, password: string): Promise<Error | undefined>{
@@ -85,6 +84,19 @@ class API{
         return res;
     }
 
+
+    public async removeFriend(id: string) {
+        await fetch(URL + '/remove-friend', {
+            mode: 'cors',
+            credentials: 'include',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: id
+        });
+    }
 
     public async requestFriend(userName: string) :Promise<Error | undefined> {
 
@@ -290,6 +302,8 @@ class API{
     public async sendGroupMessage(message: string) {
 
     }
+
+
 }
 
 export const api = new API();

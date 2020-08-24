@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -136,6 +137,30 @@ public class GameApi {
         session.setAttribute("user", new UserDTO(newUser));
     }
 
+    @PostMapping(path = "/remove-friend", consumes = MediaType.APPLICATION_JSON_VALUE )
+    public void removeFriend(@RequestBody Long id, HttpServletResponse response, HttpServletRequest request) {
+
+        User user = businessManager.findUserById(getUserDTOFromRequest(request).getId());
+        User friend = businessManager.findUserById(id);
+
+        if(id == null || id.equals(user.getId()) || friend == null){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        if (!user.getFriends().contains(friend)){
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        businessManager.dropFriendship(user, friend);
+
+        List<User> toUpdate = new ArrayList<>();
+        toUpdate.add(user);
+        toUpdate.add(friend);
+        ConnectionHandler.updateFriendList(toUpdate);
+    }
+
     @PostMapping(path = "/friend-request", consumes = MediaType.APPLICATION_JSON_VALUE )
     public void friendRequest(@RequestBody String userName, HttpServletResponse response, HttpServletRequest request) {
         UserDTO userDTO = getUserDTOFromRequest(request);
@@ -172,6 +197,11 @@ public class GameApi {
         if (foundUser.getFriendRequests().contains(currentUser)){
             foundUser.getFriendRequests().remove(currentUser);
             businessManager.createFriendship(currentUser, foundUser);
+
+            List<User> toUpdate = Lists.newArrayList();
+            toUpdate.add(currentUser);
+            toUpdate.add(foundUser);
+            ConnectionHandler.updateFriendList(toUpdate);
             return;
         }
 
@@ -272,24 +302,24 @@ public class GameApi {
         }
     }
 
-    @GetMapping("/friends")
-    public String getFriends(HttpServletRequest request) {
-        User user = businessManager.findUserById(getUserDTOFromRequest(request).getId());
-
-        List<UserDTO> friends = Lists.newArrayList();
-        for (User friend: user.getFriends()){
-            UserDTO userDTO = new UserDTO(friend);
-            userDTO.setUserState(ConnectionHandler.getWebSocketsByUserId(friend.getId()).isEmpty() ? UserState.offline : UserState.online);
-            friends.add(userDTO);
-        }
-
-        try {
-            return mapper.writeValueAsString(friends);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+//    @GetMapping("/friends")
+//    public String getFriends(HttpServletRequest request) {
+//        User user = businessManager.findUserById(getUserDTOFromRequest(request).getId());
+//
+//        List<UserDTO> friends = Lists.newArrayList();
+//        for (User friend: user.getFriends()){
+//            UserDTO userDTO = new UserDTO(friend);
+//            userDTO.setUserState(ConnectionHandler.getWebSocketsByUserId(friend.getId()).isEmpty() ? UserState.offline : UserState.online);
+//            friends.add(userDTO);
+//        }
+//
+//        try {
+//            return mapper.writeValueAsString(friends);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
 
     @GetMapping("/get1")

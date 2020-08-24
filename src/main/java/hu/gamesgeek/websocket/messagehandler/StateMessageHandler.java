@@ -84,4 +84,6 @@ public class StateMessageHandler extends AbstractMessageHandler<StateDTO> {
         GameWebSocketServer.broadcastMessage(wsMessage);
     }
 
+
+
 }

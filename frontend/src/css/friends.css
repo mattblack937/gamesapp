@@ -32,6 +32,28 @@
     transform: scale(1.1);
 }
 
+.remove-friend-logo {
+    position: absolute;
+    bottom: 30px;
+    right: 140px;
+    background: lightgray;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all .3s;
+    width: 40px;
+    height: 40px;
+}
+
+.remove-friend-logo.active path{
+    fill: rgb(222, 118, 118);
+}
+
+
+
+.remove-friend-logo:hover{
+    transform: scale(1.1);
+}
+
 .friends .modal{
     /*background: none!important;*/
 }

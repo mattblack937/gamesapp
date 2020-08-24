@@ -22,7 +22,8 @@ export function Header () {
         <div className={"header"}>
 
             <div className={"header-buttons"}>
-                <HeaderButton text={"GAME"} contentMode={ContentMode.HOME} />
+                <HeaderButton text={"HOME"} contentMode={ContentMode.HOME} />
+                {/*<HeaderButton text={"HOME"} contentMode={ContentMode.GAME} />*/}
                 <HeaderButton text={"CHAT"} contentMode={ContentMode.CHAT}/>
             </div>
 

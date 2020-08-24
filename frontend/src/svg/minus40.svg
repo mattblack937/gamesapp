@@ -1,0 +1,25 @@
+<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+
+    <title>remove_circle</title>
+    <desc>Created with Sketch.</desc>
+    <g>
+        <title>background</title>
+        <rect fill="none" id="canvas_background" height="42" width="42" y="-1" x="-1"/>
+    </g>
+    <g>
+        <title>Layer 1</title>
+        <g fill-rule="evenodd" fill="none" id="Icons">
+            <g id="Rounded">
+                <g id="Content">
+                    <g id="-Round-/-Content-/-remove_circle">
+                        <g id="svg_1">
+                            <polygon points="-0.22784829139709473,-0.481012761592865 39.97467803955078,-0.481012761592865 39.97467803955078,39.72151356935501 -0.22784829139709473,39.72151356935501 " id="Path"/>
+                            <path fill="#1D1D1D" id="🔹Icon-Color" d="m19.87341,2.8692c-9.24658,0 -16.75105,7.50447 -16.75105,16.75105c0,9.24658 7.50447,16.75105 16.75105,16.75105c9.24658,0 16.75105,-7.50447 16.75105,-16.75105c0,-9.24658 -7.50447,-16.75105 -16.75105,-16.75105zm6.70042,18.42616l-13.40084,0c-0.92131,0 -1.67511,-0.7538 -1.67511,-1.67511c0,-0.92131 0.7538,-1.67511 1.67511,-1.67511l13.40084,0c0.92131,0 1.67511,0.7538 1.67511,1.67511c0,0.92131 -0.7538,1.67511 -1.67511,1.67511z"/>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

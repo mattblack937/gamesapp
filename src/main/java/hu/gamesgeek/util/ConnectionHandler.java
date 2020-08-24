@@ -1,12 +1,23 @@
 package hu.gamesgeek.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import hu.gamesgeek.GameWebSocketServer;
+import hu.gamesgeek.model.user.BusinessManager;
+import hu.gamesgeek.model.user.User;
+import hu.gamesgeek.types.MessageType;
+import hu.gamesgeek.types.UserState;
+import hu.gamesgeek.types.dto.UserDTO;
 import hu.gamesgeek.types.dto.UserTokenDTO;
-import hu.gamesgeek.websocket.messagehandler.StateMessageHandler;
+import hu.gamesgeek.websocket.WSMessage;
 import org.java_websocket.WebSocket;
 
 import java.util.*;
 
 public abstract class ConnectionHandler {
+
+    private static ObjectMapper mapper = new ObjectMapper();
 
     private static Map<Long, List<WebSocket>> userConnections = new HashMap<>();
     private static List<UserTokenDTO> userTokens = new ArrayList<>();
@@ -37,7 +48,45 @@ public abstract class ConnectionHandler {
             userConnections.put(userId, webSockets);
         } else {
             userConnections.put(userId, Arrays.asList(webSocket));
+
+            List<User> toUpdate = Lists.newArrayList();
+            User user = ServiceHelper.getService(BusinessManager.class).findEagerUserById(userId);
+            toUpdate.add(user);
+            toUpdate.addAll(user.getFriends());
+
+            updateFriendList(toUpdate);
         }
+    }
+
+    public static void updateFriendList(List<User> userList) {
+        userList.forEach(user -> updateFriendList(user));
+    }
+
+    private static void updateFriendList(User user) {
+        user = ServiceHelper.getService(BusinessManager.class).findEagerUserById(user.getId());
+
+        List<UserDTO> friends = Lists.newArrayList();
+        for (User friend: user.getFriends()){
+            UserDTO userDTO = new UserDTO(friend);
+            userDTO.setUserState(ConnectionHandler.getWebSocketsByUserId(friend.getId()).isEmpty() ? UserState.offline : UserState.online);
+            friends.add(userDTO);
+        }
+
+        try {
+            mapper.writeValueAsString(friends);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        WSMessage wsMessage = new WSMessage();
+        wsMessage.setMessageType(MessageType.FRIEND_LIST);
+        try {
+            wsMessage.setData(mapper.writeValueAsString(friends));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        GameWebSocketServer.sendMessage(user.getId(), wsMessage);
     }
 
     public static void removeUserToken(UserTokenDTO userToken) {
@@ -45,9 +94,7 @@ public abstract class ConnectionHandler {
     }
 
     public static void removeAndCloseWebSockets(Long userId) {
-        List<WebSocket> webSockets = userConnections.get(userId);
-        userConnections.remove(userId);
-        webSockets.forEach(webSocket -> webSocket.close());
+        userConnections.get(userId).stream().forEach(webSocket -> removeWebSocket(userId, webSocket));
     }
 
     public static void removeAndCloseWebSocket(WebSocket webSocket) {
@@ -64,6 +111,9 @@ public abstract class ConnectionHandler {
         webSockets.remove(webSocket);
         if (webSockets.isEmpty()){
             userConnections.remove(userId);
+
+            User user = ServiceHelper.getService(BusinessManager.class).findEagerUserById(userId);
+            updateFriendList(new ArrayList<>(user.getFriends()));
         } else {
             userConnections.put(userId, webSockets);
         }

@@ -3,6 +3,7 @@ import '../css/friends.css';
 import {Modal} from "./Modal";
 import {ReactComponent as FriendsLogo} from '../svg/friends.svg';
 import {ReactComponent as PlusLogo} from '../svg/plus2.svg';
+import {ReactComponent as MinusLogo40} from '../svg/minus40.svg';
 import {ReactComponent as PlusLogo70} from '../svg/plus70.svg';
 import {User, UserState} from "../util/types";
 import {type} from "os";
@@ -17,22 +18,29 @@ export function Friends () {
 
     const [addNewFriendOpen, setAddNewFriendOpen] = useState<boolean>(false);
 
+    const [removeFriendActive, setRemoveFriendActive] = useState<boolean>(false);
+
     const {friends}  = useContext(AppContext);
 
     const friendsLogo =
-        <div className={"friends-logo"} onClick={()=> {setFriendsOpen(!friendsOpen);setAddNewFriendOpen(false)}}>
+        <div className={"friends-logo"} onClick={()=> {setFriendsOpen(!friendsOpen);setAddNewFriendOpen(false);setRemoveFriendActive(false)}}>
             <FriendsLogo/>
         </div>;
 
     const addFriendLogo =
-        <div className={"add-friend-logo"} onClick={()=> setAddNewFriendOpen(!addNewFriendOpen)}>
+        <div className={"add-friend-logo"} onClick={()=> {setAddNewFriendOpen(!addNewFriendOpen);setRemoveFriendActive(false)}}>
             <PlusLogo/>
+        </div>;
+
+    const removeFriendLogo =
+        <div className={"remove-friend-logo" + (removeFriendActive ? " active" : "")} onClick={()=> {setRemoveFriendActive(!removeFriendActive);setAddNewFriendOpen(false)}}>
+            <MinusLogo40/>
         </div>;
 
     return (
         <div className={"friends"}>
 
-            <Modal isOpen={friendsOpen} closeOnBackGroundClick={true} close={()=> {setFriendsOpen(false); setAddNewFriendOpen(false)}}>
+            <Modal isOpen={friendsOpen} closeOnBackGroundClick={true} close={()=> {setFriendsOpen(false); setAddNewFriendOpen(false); setRemoveFriendActive(false)}}>
 
                 <div className={"friend-list"}>
                     {friends && friends.sort((a, b) => a.name < b.name ? 1 : -1).sort((a, b) => a.userState===UserState.ONLINE ? -1 : 1).map((friend, key) =>
@@ -40,6 +48,7 @@ export function Friends () {
                     )}
                 </div>
 
+                {removeFriendLogo}
                 {addFriendLogo}
                 {friendsLogo}
 
@@ -56,9 +65,13 @@ export function Friends () {
         friend: User
     }
 
+    async function removeFriend(friend: User) {
+        await api.removeFriend(friend.id);
+    }
+
     function FriendCard({friend}: FriendCardProps) {
         return (
-            <div className={"friend-card"}>
+            <div className={"friend-card"} onClick={()=> removeFriendActive && removeFriend(friend)}>
                 <div className={"friend-name"}>
                     {friend.name}
                 </div>
@@ -87,7 +100,6 @@ export function Friends () {
             if(!error){
                 setUserName("");
                 setAddNewFriendOpen(false);
-                setFriendsOpen(false);
             } else {
                 setError(error.message);
             }
